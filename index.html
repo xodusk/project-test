@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유통기한 관리</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>유통기한 관리</h1>
+
+        <!-- 입력 -->
+        <input type="text" id="foodName" placeholder="식품 이름">
+        <input type="date" id="expiryDate">
+        <button onclick="addFood()">추가</button>
+
+        <!-- 카메라 -->
+        <h3>카메라로 입력</h3>
+        <video id="camera" autoplay playsinline></video><br>
+        <button id="cameraBtn" onclick="startCamera()">카메라 켜기</button>
+        <button id="captureBtn" onclick="captureImage()" disabled>촬영</button>
+
+        <!-- 리스트 -->
+        <ul id="foodList"></ul>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
