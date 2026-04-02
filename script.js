@@ -67,3 +67,82 @@ function captureImage() {
 
     alert("촬영 완료!");
 }
+
+
+// 📅 D-day 계산 함수
+function getDday(expiryDate) {
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+
+    today.setHours(0,0,0,0);
+    expiry.setHours(0,0,0,0);
+
+    const diffTime = expiry - today;
+    const diffDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDay > 1) return `D-${diffDay}`;
+    if (diffDay === 1) return "D-1 임박 ⚠️";
+    if (diffDay === 0) return "D-0 오늘 ⚠️";
+    return "유통기한 지남 ❌";
+}
+
+// 📢 상태 표시 함수
+function showStatus() {
+    const date = document.getElementById("expiryDate").value;
+
+    if (!date) {
+        alert("유통기한을 입력하세요!");
+        return;
+    }
+
+    const status = getDday(date);
+    document.getElementById("statusMessage").textContent = status;
+}
+
+// 📆 오늘 날짜 표시 (기존 onload에 추가용)
+window.addEventListener("load", function () {
+    const today = new Date();
+    const formatted = today.toISOString().split("T")[0];
+    const el = document.getElementById("todayDate");
+    if (el) {
+        el.textContent = `오늘 날짜: ${formatted}`;
+    }
+});// 📅 D-day 계산 함수
+function getDday(expiryDate) {
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+
+    today.setHours(0,0,0,0);
+    expiry.setHours(0,0,0,0);
+
+    const diffTime = expiry - today;
+    const diffDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDay > 1) return `D-${diffDay}`;
+    if (diffDay === 1) return "D-1 임박 ⚠️";
+    if (diffDay === 0) return "D-0 오늘 ⚠️";
+    return "유통기한 지남 ❌";
+}
+
+// 📢 상태 표시 함수
+function showStatus() {
+    const date = document.getElementById("expiryDate").value;
+
+    if (!date) {
+        alert("유통기한을 입력하세요!");
+        return;
+    }
+
+    const status = getDday(date);
+    document.getElementById("statusMessage").textContent = status;
+}
+
+// 📆 오늘 날짜 표시 (기존 onload에 추가용)
+window.addEventListener("load", function () {
+    const today = new Date();
+    const formatted = today.toISOString().split("T")[0];
+    const el = document.getElementById("todayDate");
+    if (el) {
+        el.textContent = `오늘 날짜: ${formatted}`;
+    }
+});
