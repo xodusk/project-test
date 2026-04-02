@@ -146,3 +146,25 @@ window.addEventListener("load", function () {
         el.textContent = `오늘 날짜: ${formatted}`;
     }
 });
+
+// 📸 촬영 내용 삭제 (카메라 초기화)
+function clearCamera() {
+    const video = document.getElementById("camera");
+
+    // 영상 비우기
+    video.srcObject = null;
+
+    // 스트림 종료
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    cameraOn = false;
+
+    // 버튼 상태 초기화
+    document.getElementById("cameraBtn").textContent = "카메라 켜기";
+    document.getElementById("captureBtn").disabled = true;
+
+    alert("촬영이 삭제되었습니다!");
+}
