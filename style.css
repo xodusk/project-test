@@ -1,35 +1,30 @@
-/* 전반적인 배경 설정 */
 body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     background-color: #f8f9fa;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 상단부터 채우기 */
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* 메인 컨테이너 */
 .container {
     background: white;
     width: 100%;
     max-width: 450px;
     padding: 30px;
     border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-h1 {
+h1, h3 {
     color: #333;
-    font-size: 24px;
-    margin-bottom: 25px;
-    font-weight: 700;
 }
 
-/* 입력 영역 스타일 */
-input[type="text"], input[type="date"] {
+input[type="text"],
+input[type="date"] {
     width: 100%;
     padding: 14px;
     margin-bottom: 10px;
@@ -37,7 +32,6 @@ input[type="text"], input[type="date"] {
     border: 1.5px solid #eee;
     font-size: 15px;
     box-sizing: border-box;
-    transition: border-color 0.3s;
 }
 
 input:focus {
@@ -45,7 +39,6 @@ input:focus {
     border-color: #4CAF50;
 }
 
-/* 버튼 공통 스타일 */
 button {
     width: 100%;
     padding: 14px;
@@ -54,85 +47,84 @@ button {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
     margin-bottom: 10px;
-}
-
-/* 추가 버튼 (메인 색상) */
-button:first-of-type, #cameraBtn {
-    background-color: #4CAF50;
-    color: white;
+    transition: all 0.2s;
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
 }
 
-/* 촬영 버튼 */
+button:first-of-type,
+#cameraBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
 #captureBtn {
     background-color: #2196F3;
     color: white;
 }
 
 #captureBtn:disabled {
-    background-color: #e0e0e0;
-    color: #999;
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
     transform: none;
-    box-shadow: none;
 }
 
-/* 카메라 영역 */
 video {
     width: 100%;
     border-radius: 16px;
     margin: 15px 0;
     background: #222;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
 }
 
-/* 리스트 스타일 (카드 형태) */
 #foodList {
     padding: 0;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
-li {
-    background: #ffffff;
-    border: 1px solid #f0f0f0;
-    margin-bottom: 12px;
-    padding: 16px;
+#foodList li {
+    list-style: none;
+    background: #fff;
+    border: 1px solid #eee;
     border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    transition: transform 0.2s;
+    gap: 10px;
 }
 
-li:hover {
-    transform: scale(1.02);
+.food-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-li span {
-    font-size: 15px;
-    color: #444;
-    font-weight: 500;
+.food-name {
+    font-weight: 700;
+    color: #222;
 }
 
-/* 리스트 내 삭제 버튼 */
-li button {
+.food-date {
+    color: #666;
+    font-size: 14px;
+}
+
+.food-dday {
+    font-size: 14px;
+    font-weight: 600;
+    color: #d97706;
+}
+
+.delete-btn {
     width: auto;
-    margin: 0;
-    padding: 6px 12px;
-    background-color: #fff1f0;
-    color: #ff4d4f;
-    font-size: 13px;
-    border: 1px solid #ffccc7;
-}
-
-li button:hover {
+    padding: 8px 12px;
     background-color: #ff4d4f;
     color: white;
-    box-shadow: 0 4px 10px rgba(255, 77, 79, 0.2);
+    font-size: 13px;
+    margin: 0;
 }
