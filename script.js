@@ -142,7 +142,7 @@ function getDday(expiryDate) {
     if (diff > 1) return `D-${diff}`;
     if (diff === 1) return "D-1 임박 ⚠️";
     if (diff === 0) return "D-0 오늘 ⚠️";
-    return "유통기한 지남 ❌";
+    return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
 }
 
 // -------------------------
