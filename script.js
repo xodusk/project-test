@@ -1,6 +1,25 @@
 let cameraOn = false;
 let stream = null;
 let foods = [];
+let mode = null; // 🔥 추가 (barcode / ocr)
+
+// -------------------------
+// 모드 선택
+// -------------------------
+function setMode(selectedMode) {
+    mode = selectedMode;
+
+    document.getElementById("barcodeBtn").classList.remove("active");
+    document.getElementById("ocrBtn").classList.remove("active");
+
+    if (mode === "barcode") {
+        document.getElementById("barcodeBtn").classList.add("active");
+        alert("바코드 스캔 모드입니다");
+    } else {
+        document.getElementById("ocrBtn").classList.add("active");
+        alert("유통기한 스캔 모드입니다");
+    }
+}
 
 // -------------------------
 // 카메라 켜기
@@ -52,7 +71,7 @@ function stopCamera() {
 }
 
 // -------------------------
-// 촬영
+// 촬영 (🔥 핵심 수정)
 // -------------------------
 function captureImage() {
     const video = document.getElementById("camera");
@@ -62,29 +81,59 @@ function captureImage() {
         return;
     }
 
-    const canvas = document.createElement("canvas");
+    if (!mode) {
+        alert("먼저 모드를 선택하세요!");
+        return;
+    }
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0);
 
-    const imgData = canvas.toDataURL("image/png");
+    // 🔥 바코드 모드
+    if (mode === "barcode") {
+        const codeReader = new ZXing.BrowserBarcodeReader();
 
-    const list = document.getElementById("foodList");
-    const li = document.createElement("li");
-    li.innerHTML = `
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${imgData}" style="width:80px; border-radius:8px;">
-        <span>촬영한 이미지</span>
-        <button onclick="this.closest('li').remove()" 
-                style="background-color:#ff4d4d; color:white; border:none; padding:5px 10px; border-radius:5px;">
-            삭제
-        </button>
-    </div>
-`;
-    list.appendChild(li);
+        codeReader.decodeFromCanvas(canvas)
+            .then(result => {
+                console.log("바코드:", result.text);
 
-    alert("촬영 완료!");
+                // 👉 실제는 API 연결 가능
+                document.getElementById("foodName").value = "상품명(예시)";
+
+                alert("상품명 자동 입력 완료!");
+            })
+            .catch(() => {
+                alert("바코드 인식 실패 😢");
+            });
+    }
+
+    // 🔥 OCR 모드
+    else if (mode === "ocr") {
+        document.getElementById("statusMessage").textContent = "🔍 분석 중...";
+
+        Tesseract.recognize(canvas, 'eng')
+            .then(result => {
+                const text = result.data.text;
+                console.log(text);
+
+                const dateMatch = text.match(/\d{4}[.\-\/]\d{2}[.\-\/]\d{2}/);
+
+                if (dateMatch) {
+                    document.getElementById("expiryDate").value = dateMatch[0];
+                    alert("유통기한 자동 입력 완료!");
+                } else {
+                    alert("유통기한 인식 실패 😢");
+                }
+
+                document.getElementById("statusMessage").textContent = "";
+            });
+    }
+
+    stopCamera();
 }
 
 // -------------------------
@@ -156,7 +205,6 @@ async function addFood() {
         return;
     }
 
-    // 알림 권한 요청
     await requestNotificationPermission();
 
     const food = {
@@ -169,8 +217,6 @@ async function addFood() {
     foods.push(food);
     saveFoods();
     renderFoodList();
-
-    // 오늘 날짜면 추가 직후 바로 알림 검사
     checkExpiryNotifications();
 
     foodNameInput.value = "";
@@ -224,47 +270,25 @@ function loadFoods() {
 }
 
 // -------------------------
-// 알림 권한 요청
+// 알림 관련
 // -------------------------
 async function requestNotificationPermission() {
-    if (!("Notification" in window)) {
-        alert("이 브라우저는 알림을 지원하지 않습니다.");
-        return false;
-    }
+    if (!("Notification" in window)) return false;
 
-    if (Notification.permission === "granted") {
-        return true;
-    }
+    if (Notification.permission === "granted") return true;
 
-    if (Notification.permission === "denied") {
-        alert("브라우저에서 알림이 차단되어 있습니다. 사이트 설정에서 알림을 허용해주세요.");
-        return false;
-    }
+    if (Notification.permission === "denied") return false;
 
     const permission = await Notification.requestPermission();
-
-    if (permission === "granted") {
-        return true;
-    } else {
-        alert("알림 권한이 허용되지 않았습니다.");
-        return false;
-    }
+    return permission === "granted";
 }
 
-// -------------------------
-// 브라우저 알림 보내기
-// -------------------------
 function sendNotification(title, body) {
-    if (!("Notification" in window)) return;
-
     if (Notification.permission === "granted") {
         new Notification(title, { body });
     }
 }
 
-// -------------------------
-// 유통기한 당일 알림 검사
-// -------------------------
 function checkExpiryNotifications() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -276,10 +300,7 @@ function checkExpiryNotifications() {
         expiry.setHours(0, 0, 0, 0);
 
         if (expiry.getTime() === today.getTime() && !food.notified) {
-            sendNotification(
-                "유통기한 알림",
-                `${food.name}의 유통기한이 오늘까지입니다!`
-            );
+            sendNotification("유통기한 알림", `${food.name}의 유통기한이 오늘까지입니다!`);
             food.notified = true;
             changed = true;
         }
@@ -292,26 +313,19 @@ function checkExpiryNotifications() {
 }
 
 // -------------------------
-// 페이지 로드 시 실행
+// 페이지 로드
 // -------------------------
 window.addEventListener("load", async function () {
     const today = new Date();
     const formatted = today.toISOString().split("T")[0];
-    const el = document.getElementById("todayDate");
 
-    if (el) {
-        el.textContent = `오늘 날짜: ${formatted}`;
-    }
+    document.getElementById("todayDate").textContent = `오늘 날짜: ${formatted}`;
 
     loadFoods();
     renderFoodList();
 
-    // 페이지 열 때도 알림 권한 확인
     await requestNotificationPermission();
 
-    // 처음 한 번 검사
     checkExpiryNotifications();
-
-    // 1분마다 다시 검사
     setInterval(checkExpiryNotifications, 60000);
 });
