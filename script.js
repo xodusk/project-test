@@ -4,25 +4,18 @@ let foods = [];
 let mode = null;
 
 // -------------------------
-// 상품명 스캔 (바코드)
-// -------------------------
 function startBarcodeMode() {
     mode = "barcode";
     startCamera();
     alert("바코드를 스캔해주세요");
 }
 
-// -------------------------
-// 유통기한 스캔 (OCR)
-// -------------------------
 function startOcrMode() {
     mode = "ocr";
     startCamera();
     alert("유통기한을 촬영해주세요");
 }
 
-// -------------------------
-// 카메라 켜기
 // -------------------------
 function startCamera() {
     if (cameraOn) return;
@@ -42,9 +35,6 @@ function startCamera() {
         });
 }
 
-// -------------------------
-// 카메라 끄기
-// -------------------------
 function stopCamera() {
     if (stream) {
         stream.getTracks().forEach(track => track.stop());
@@ -56,8 +46,6 @@ function stopCamera() {
     document.getElementById("captureBtn").disabled = true;
 }
 
-// -------------------------
-// 촬영
 // -------------------------
 function captureImage() {
     const video = document.getElementById("camera");
@@ -80,16 +68,32 @@ function captureImage() {
     ctx.drawImage(video, 0, 0);
 
     // -------------------------
-    // 바코드
+    // 🔥 바코드 + API 연결
     // -------------------------
     if (mode === "barcode") {
         const codeReader = new ZXing.BrowserBarcodeReader();
 
         codeReader.decodeFromImage(undefined, canvas)
             .then(result => {
-                console.log(result.text);
-                document.getElementById("foodName").value = "상품명(예시)";
-                alert("상품명 자동 입력 완료!");
+                const barcode = result.text;
+                console.log("바코드:", barcode);
+
+                // 🔥 API 호출
+                fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 1 && data.product.product_name) {
+                            document.getElementById("foodName").value = data.product.product_name;
+                            alert("상품명 자동 입력 완료!");
+                        } else {
+                            document.getElementById("foodName").value = barcode;
+                            alert("상품 정보를 찾을 수 없어 코드만 입력되었습니다. 이름을 수정해주세요!");
+                        }
+                    })
+                    .catch(() => {
+                        document.getElementById("foodName").value = barcode;
+                        alert("API 오류! 코드만 입력되었습니다.");
+                    });
             })
             .catch(() => {
                 alert("바코드 인식 실패 😢");
@@ -97,7 +101,7 @@ function captureImage() {
     }
 
     // -------------------------
-    // OCR (🔥 업그레이드 핵심)
+    // 🔥 OCR (날짜 선택 기능 포함)
     // -------------------------
     else if (mode === "ocr") {
         const status = document.getElementById("statusMessage");
@@ -108,7 +112,6 @@ function captureImage() {
                 const text = result.data.text;
                 console.log(text);
 
-                // 🔥 여러 날짜 추출
                 const matches = text.match(/\d{4}[.\-\/]\d{2}[.\-\/]\d{2}/g);
 
                 if (matches && matches.length > 0) {
@@ -138,15 +141,11 @@ function captureImage() {
 }
 
 // -------------------------
-// 촬영 삭제
-// -------------------------
 function clearCamera() {
     stopCamera();
     alert("촬영이 삭제되었습니다!");
 }
 
-// -------------------------
-// D-day
 // -------------------------
 function getDday(expiryDate) {
     const today = new Date();
