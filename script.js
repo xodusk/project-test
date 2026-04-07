@@ -4,7 +4,7 @@ let foods = [];
 let mode = null;
 
 // -------------------------
-// 🔥 상품명 스캔 (바코드)
+// 상품명 스캔 (바코드)
 // -------------------------
 function startBarcodeMode() {
     mode = "barcode";
@@ -13,7 +13,7 @@ function startBarcodeMode() {
 }
 
 // -------------------------
-// 🔥 유통기한 스캔 (OCR)
+// 유통기한 스캔 (OCR)
 // -------------------------
 function startOcrMode() {
     mode = "ocr";
@@ -79,11 +79,13 @@ function captureImage() {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    // 🔥 바코드
+    // -------------------------
+    // 바코드
+    // -------------------------
     if (mode === "barcode") {
         const codeReader = new ZXing.BrowserBarcodeReader();
 
-        codeReader.decodeFromCanvas(canvas)
+        codeReader.decodeFromImage(undefined, canvas)
             .then(result => {
                 console.log(result.text);
                 document.getElementById("foodName").value = "상품명(예시)";
@@ -94,25 +96,41 @@ function captureImage() {
             });
     }
 
-    // 🔥 OCR
+    // -------------------------
+    // OCR (🔥 업그레이드 핵심)
+    // -------------------------
     else if (mode === "ocr") {
-        document.getElementById("statusMessage").textContent = "🔍 분석 중...";
+        const status = document.getElementById("statusMessage");
+        status.textContent = "🔍 분석 중...";
 
-        Tesseract.recognize(canvas, 'eng')
+        Tesseract.recognize(canvas, 'eng+kor')
             .then(result => {
                 const text = result.data.text;
                 console.log(text);
 
-                const match = text.match(/\d{4}[.\-\/]\d{2}[.\-\/]\d{2}/);
+                // 🔥 여러 날짜 추출
+                const matches = text.match(/\d{4}[.\-\/]\d{2}[.\-\/]\d{2}/g);
 
-                if (match) {
-                    document.getElementById("expiryDate").value = match[0];
-                    alert("유통기한 입력 완료!");
+                if (matches && matches.length > 0) {
+                    status.innerHTML = "<b>날짜를 선택하세요:</b><br>";
+
+                    matches.forEach(date => {
+                        const btn = document.createElement("button");
+                        btn.textContent = date;
+                        btn.style.margin = "5px";
+                        btn.style.width = "auto";
+
+                        btn.onclick = () => {
+                            document.getElementById("expiryDate").value = date;
+                            status.innerHTML = "";
+                        };
+
+                        status.appendChild(btn);
+                    });
                 } else {
                     alert("유통기한 인식 실패 😢");
+                    status.textContent = "";
                 }
-
-                document.getElementById("statusMessage").textContent = "";
             });
     }
 
@@ -142,11 +160,9 @@ function getDday(expiryDate) {
     if (diff > 1) return `D-${diff}`;
     if (diff === 1) return "D-1 임박 ⚠️";
     if (diff === 0) return "D-0 오늘 ⚠️";
-    return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
+    return "유통기한 지남 ❌";
 }
 
-// -------------------------
-// 식품 추가
 // -------------------------
 async function addFood() {
     const name = document.getElementById("foodName").value.trim();
@@ -178,65 +194,20 @@ async function addFood() {
 }
 
 // -------------------------
-// 리스트
-// -------------------------
 function renderFoodList() {
     const list = document.getElementById("foodList");
     list.innerHTML = "";
 
-    let sortedFoods = [...foods];
-
-    // 🔥 정렬 (임박 → 아래 → 만료 맨 아래)
-    sortedFoods.sort((a, b) => {
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        const aDate = new Date(a.expiryDate);
-        const bDate = new Date(b.expiryDate);
-
-        aDate.setHours(0,0,0,0);
-        bDate.setHours(0,0,0,0);
-
-        const aDiff = Math.ceil((aDate - today) / (1000*60*60*24));
-        const bDiff = Math.ceil((bDate - today) / (1000*60*60*24));
-
-        // ❌ 만료된 건 아래로
-        if (aDiff < 0 && bDiff >= 0) return 1;
-        if (aDiff >= 0 && bDiff < 0) return -1;
-
-        // ⏳ 임박한 순 (작을수록 위)
-        return aDiff - bDiff;
-    });
-
-    let expiredSection = false;
-
-    sortedFoods.forEach(food => {
+    foods.forEach(food => {
         const li = document.createElement("li");
-
-        const dday = getDday(food.expiryDate);
-
-        // 🔥 만료 구분선 추가
-        if (dday.includes("지남") && !expiredSection) {
-            const divider = document.createElement("li");
-            divider.innerHTML = "<hr><strong>❌ 유통기한 지난 식품</strong>";
-            list.appendChild(divider);
-            expiredSection = true;
-        }
-
-        // 🔥 색상 처리
-        let color = "black";
-        if (dday.includes("지남")) color = "red";
-        else if (dday.includes("임박") || dday.includes("오늘")) color = "orange";
-
         li.innerHTML = `
-            <div class="food-info" style="color:${color}">
+            <div class="food-info">
                 <span class="food-name">${food.name}</span>
                 <span class="food-date">${food.expiryDate}</span>
-                <span class="food-dday">${dday}</span>
+                <span class="food-dday">${getDday(food.expiryDate)}</span>
             </div>
             <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
         `;
-
         list.appendChild(li);
     });
 }
