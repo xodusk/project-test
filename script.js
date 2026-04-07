@@ -73,11 +73,15 @@ function captureImage() {
     const list = document.getElementById("foodList");
     const li = document.createElement("li");
     li.innerHTML = `
-        <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${imgData}" style="width:80px; border-radius:8px;">
-            <span>촬영한 이미지</span>
-        </div>
-    `;
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${imgData}" style="width:80px; border-radius:8px;">
+        <span>촬영한 이미지</span>
+        <button onclick="this.closest('li').remove()" 
+                style="background-color:#ff4d4d; color:white; border:none; padding:5px 10px; border-radius:5px;">
+            삭제
+        </button>
+    </div>
+`;
     list.appendChild(li);
 
     alert("촬영 완료!");
