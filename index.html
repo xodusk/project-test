@@ -19,22 +19,17 @@
         <p id="todayDate"></p>
         <p id="statusMessage"></p>
 
-        <!-- 🔥 모드 선택 -->
+        <!-- 카메라 기능 -->
         <h3>카메라로 입력</h3>
 
-        <div class="mode-buttons">
-            <button id="barcodeBtn" onclick="setMode('barcode')">바코드 스캔</button>
-            <button id="ocrBtn" onclick="setMode('ocr')">유통기한 스캔</button>
-        </div>
+        <button onclick="startBarcodeMode()">상품명 스캔</button>
+        <button onclick="startOcrMode()">유통기한 스캔</button>
 
-        <!-- 카메라 -->
         <video id="camera" autoplay playsinline></video>
 
-        <button id="cameraBtn" onclick="startCamera()">카메라 켜기</button>
         <button id="captureBtn" onclick="captureImage()" disabled>촬영</button>
         <button onclick="clearCamera()">촬영 삭제</button>
 
-        <!-- 숨김 캔버스 (OCR & 바코드용) -->
         <canvas id="canvas" style="display:none;"></canvas>
 
         <!-- 리스트 -->
@@ -42,11 +37,10 @@
         <ul id="foodList"></ul>
     </div>
 
-    <!-- 🔥 라이브러리 -->
+    <!-- 라이브러리 -->
     <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-    <!-- JS -->
     <script src="script.js"></script>
 </body>
 </html>
