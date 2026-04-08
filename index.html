@@ -10,7 +10,6 @@
     <div class="container">
         <h1>유통기한 관리</h1>
 
-        <!-- 입력 -->
         <input type="text" id="foodName" placeholder="식품 이름 입력" />
         <input type="date" id="expiryDate" />
 
@@ -19,8 +18,7 @@
         <p id="todayDate"></p>
         <p id="statusMessage"></p>
 
-        <!-- 카메라 기능 -->
-        <h3>카메라로 입력</h3>
+        <h3>카메라 입력</h3>
 
         <button onclick="startBarcodeMode()">상품명 스캔</button>
         <button onclick="startOcrMode()">유통기한 스캔</button>
@@ -28,19 +26,16 @@
         <video id="camera" autoplay playsinline></video>
 
         <button id="captureBtn" onclick="captureImage()" disabled>촬영</button>
-        <button onclick="clearCamera()">촬영 삭제</button>
+        <button onclick="clearCamera()">촬영 종료</button>
 
         <canvas id="canvas" style="display:none;"></canvas>
 
-        <!-- 리스트 -->
         <h3>등록된 식품</h3>
         <ul id="foodList"></ul>
     </div>
 
-    <!-- 라이브러리 -->
     <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>
