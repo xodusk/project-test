@@ -150,19 +150,19 @@ function clearCamera() {
 }
 
 // -------------------------
-function getDday(date) {
+function getDday(expiryDate) {
     const today = new Date();
-    const expiry = new Date(date);
+    const expiry = new Date(expiryDate);
 
-    today.setHours(0,0,0,0);
-    expiry.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
 
-    const diff = Math.ceil((expiry - today) / (1000*60*60*24));
+    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
 
     if (diff > 1) return `D-${diff}`;
-    if (diff === 1) return "D-1 ⚠️";
-    if (diff === 0) return "오늘 ⚠️";
-    return "지남 ❌";
+    if (diff === 1) return "D-1 임박 ⚠️";
+    if (diff === 0) return "D-0 오늘 ⚠️";
+    return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
 }
 
 // -------------------------
