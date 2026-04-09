@@ -191,22 +191,26 @@ function renderFoodList() {
 
     let sortedFoods = [...foods];
 
-    sortedFoods.sort((a, b) => {
-        const today = new Date();
-        today.setHours(0,0,0,0);
+sortedFoods.sort((a, b) => {
+    const today = new Date();
+    today.setHours(0,0,0,0);
 
-        const aDate = new Date(a.expiryDate);
-        const bDate = new Date(b.expiryDate);
+    const aDate = new Date(a.expiryDate);
+    const bDate = new Date(b.expiryDate);
 
-        aDate.setHours(0,0,0,0);
-        bDate.setHours(0,0,0,0);
+    aDate.setHours(0,0,0,0);
+    bDate.setHours(0,0,0,0);
 
-        const aDiff = Math.ceil((aDate - today) / (1000*60*60*24));
-        const bDiff = Math.ceil((bDate - today) / (1000*60*60*24));
+    const aDiff = Math.ceil((aDate - today) / (1000*60*60*24));
+    const bDiff = Math.ceil((bDate - today) / (1000*60*60*24));
 
-        // 임박 순 정렬
-        return aDiff - bDiff;
-    });
+    // 🔥 1. 만료된 건 무조건 아래
+    if (aDiff < 0 && bDiff >= 0) return 1;
+    if (aDiff >= 0 && bDiff < 0) return -1;
+
+    // 🔥 2. 나머지는 임박 순
+    return aDiff - bDiff;
+});
 
     sortedFoods.forEach(food => {
         const li = document.createElement("li");
