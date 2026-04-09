@@ -186,12 +186,59 @@ function renderFoodList() {
     const list = document.getElementById("foodList");
     list.innerHTML = "";
 
-    foods.forEach(f => {
+    let sortedFoods = [...foods];
+
+    // 🔥 정렬 (임박 → 아래 → 만료 맨 아래)
+    sortedFoods.sort((a, b) => {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const aDate = new Date(a.expiryDate);
+        const bDate = new Date(b.expiryDate);
+
+        aDate.setHours(0,0,0,0);
+        bDate.setHours(0,0,0,0);
+
+        const aDiff = Math.ceil((aDate - today) / (1000*60*60*24));
+        const bDiff = Math.ceil((bDate - today) / (1000*60*60*24));
+
+        // ❌ 만료된 건 아래로
+        if (aDiff < 0 && bDiff >= 0) return 1;
+        if (aDiff >= 0 && bDiff < 0) return -1;
+
+        // ⏳ 임박한 순 (작을수록 위)
+        return aDiff - bDiff;
+    });
+
+    let expiredSection = false;
+
+    sortedFoods.forEach(food => {
         const li = document.createElement("li");
+
+        const dday = getDday(food.expiryDate);
+
+        // 🔥 만료 구분선 추가
+        if (dday.includes("지남") && !expiredSection) {
+            const divider = document.createElement("li");
+            divider.innerHTML = "<hr><strong>❌ 유통기한 지난 식품</strong>";
+            list.appendChild(divider);
+            expiredSection = true;
+        }
+
+        // 🔥 색상 처리
+        let color = "black";
+        if (dday.includes("지남")) color = "red";
+        else if (dday.includes("임박") || dday.includes("오늘")) color = "orange";
+
         li.innerHTML = `
-            ${f.name} | ${f.expiryDate} | ${getDday(f.expiryDate)}
-            <button onclick="deleteFood(${f.id})">삭제</button>
+            <div class="food-info" style="color:${color}">
+                <span class="food-name">${food.name}</span>
+                <span class="food-date">${food.expiryDate}</span>
+                <span class="food-dday">${dday}</span>
+            </div>
+            <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
         `;
+
         list.appendChild(li);
     });
 }
