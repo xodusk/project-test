@@ -275,3 +275,67 @@ window.onload = () => {
 
     renderFoodList();
 };
+
+// -------------------------
+// 🔥 알림 관련 기능 추가
+// -------------------------
+
+// 1. 알림 권한 요청
+async function requestNotificationPermission() {
+    if (!("Notification" in window)) return;
+    if (Notification.permission !== "granted") {
+        await Notification.requestPermission();
+    }
+}
+
+// 2. 모바일(서비스 워커)용 알림 전송 함수
+async function sendNotification(title, body) {
+    if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.ready;
+        registration.showNotification(title, {
+            body: body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/1554/1554401.png', // 앱 아이콘 경로
+            vibrate: [200, 100, 200]
+        });
+    }
+}
+
+// 3. 유통기한 체크해서 알림 띄우기
+function checkExpiryNotifications() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let isModified = false;
+
+    foods.forEach(food => {
+        const expiry = new Date(food.expiryDate);
+        expiry.setHours(0, 0, 0, 0);
+
+        // 오늘이 만료일이고, 아직 알림을 안 보낸(notified: false) 식품이라면
+        if (expiry.getTime() === today.getTime() && !food.notified) {
+            sendNotification("유통기한 임박 ⚠️", `${food.name}의 유통기한이 오늘까지입니다!`);
+            food.notified = true; // 알림 발송 완료 처리
+            isModified = true;
+        }
+    });
+
+    // 변경된 상태(알림 발송 여부)를 로컬스토리지에 다시 저장
+    if (isModified) {
+        localStorage.setItem("foods", JSON.stringify(foods));
+    }
+}
+window.onload = async () => {
+    const saved = localStorage.getItem("foods");
+    if (saved) foods = JSON.parse(saved);
+
+    document.getElementById("todayDate").textContent =
+        "오늘 날짜: " + new Date().toISOString().split("T")[0];
+
+    renderFoodList();
+
+    // 🔥 앱 실행 시 권한 요청 및 알림 체크
+    await requestNotificationPermission();
+    checkExpiryNotifications();
+
+    // 🔥 앱을 켜놓고 있을 때 1분마다 주기적으로 체크 (선택사항)
+    setInterval(checkExpiryNotifications, 60000);
+};
