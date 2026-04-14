@@ -184,13 +184,21 @@ function addFood() {
 
     if (!name || !date) return alert("입력 필요");
 
-    foods.push({ id: Date.now(), name, expiryDate: date });
+    foods.push({
+        id: Date.now(),
+        name,
+        expiryDate: date,
+        image: lastCapturedImage || null // 🔥 추가된 부분
+    });
 
     localStorage.setItem("foods", JSON.stringify(foods));
     renderFoodList();
 
     foodName.value = "";
     expiryDate.value = "";
+
+    lastCapturedImage = null; // 🔥 추가: 다음 입력을 위해 초기화
+    document.getElementById("preview").src = ""; // 🔥 미리보기 초기화
 }
 
 // -------------------------
