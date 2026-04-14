@@ -2,6 +2,7 @@ let cameraOn = false;
 let stream = null;
 let foods = [];
 let mode = null;
+let lastCapturedImage = null;
 
 // -------------------------
 function startBarcodeMode() {
