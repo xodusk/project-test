@@ -65,7 +65,7 @@ function captureImage() {
     canvas.height = video.videoHeight;
 
     // 🔥 이미지 전처리
-    ctx.filter = "contrast(200%) brightness(150%)";
+    ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
     ctx.drawImage(video, 0, 0);
 
     // -------------------------
