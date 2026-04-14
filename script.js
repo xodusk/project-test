@@ -230,14 +230,22 @@ sortedFoods.sort((a, b) => {
             <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
         `;
 
-        // 🔥 여기서 분류
-        if (dday.includes("지남")) {
-            expiredList.appendChild(li);
-        } else {
-            validList.appendChild(li);
-        }
-    });
-}
+    // 🔥 여기서 분류 (수정)
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const expiry = new Date(food.expiryDate);
+    expiry.setHours(0,0,0,0);
+
+    const diff = Math.ceil((expiry - today) / (1000*60*60*24));
+
+    if (diff < 0) {
+        expiredList.appendChild(li);
+    } else {
+        validList.appendChild(li);
+    }
+        });
+    }
 
 function deleteFood(id) {
     foods = foods.filter(f => f.id !== id);
