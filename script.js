@@ -64,9 +64,18 @@ function captureImage() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-    // 🔥 이미지 전처리
+    // 🔥 이미지 전처리 (개선된 필터)
     ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
     ctx.drawImage(video, 0, 0);
+
+    // 🔥 👉 여기 추가 (핵심)
+    const imageData = canvas.toDataURL();
+
+    // 미리보기 표시
+    document.getElementById("preview").src = imageData;
+
+    // 리스트에 저장하기 위한 이미지
+    lastCapturedImage = imageData;
 
     // -------------------------
     // 📌 바코드
@@ -75,7 +84,7 @@ function captureImage() {
         const codeReader = new ZXing.BrowserBarcodeReader();
 
         const image = new Image();
-        image.src = canvas.toDataURL();
+        image.src = imageData; // 🔥 canvas.toDataURL() 대신 변수 사용
 
         image.onload = () => {
             codeReader.decodeFromImageElement(image)
@@ -100,7 +109,7 @@ function captureImage() {
     }
 
     // -------------------------
-    // 📌 OCR
+    // 📌 OCR (기존 그대로 유지)
     // -------------------------
     else if (mode === "ocr") {
         const status = document.getElementById("statusMessage");
@@ -111,7 +120,6 @@ function captureImage() {
                 let text = result.data.text;
                 text = text.replace(/\s/g, "");
 
-                // 🔥 다양한 날짜 형식 대응
                 const matches = text.match(
                     /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/g
                 );
@@ -126,7 +134,10 @@ function captureImage() {
                         btn.onclick = () => {
                             const clean = date
                                 .replace(/년|월/g, "-")
-                                .replace(/[.\//]/g, "-");
+                                .replace(/[.\//]/g, "-")
+                                .split("-")
+                                .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
+                                .join("-");
 
                             document.getElementById("expiryDate").value = clean;
                             status.innerHTML = "";
