@@ -242,12 +242,16 @@ sortedFoods.sort((a, b) => {
         else if (dday.includes("임박") || dday.includes("오늘")) color = "orange";
 
         li.innerHTML = `
-            <div class="food-info" style="color:${color}">
-                <span class="food-name">${food.name}</span>
-                <span class="food-date">${food.expiryDate}</span>
-                <span class="food-dday">${dday}</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                ${food.image ? `<img src="${food.image}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">` : ""}
+
+                <div class="food-info" style="color:${color}">
+                    <span class="food-name">${food.name}</span>
+                    <span class="food-date">${food.expiryDate}</span>
+                    <span class="food-dday">${dday}</span>
+                </div>
             </div>
-            <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
+        <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
         `;
 
     // 🔥 여기서 분류 (수정)
