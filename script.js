@@ -179,7 +179,8 @@ function getDday(expiryDate) {
 
 
 async function fetchRecipes(ingredients) {
-    const apiKey = "YOUR_API_KEY"; // ← 여기에 키 넣기
+    const apiKey = "afbed4806429490c832c5515e243e548"
+
 
     const res = await fetch(
         `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=5&apiKey=${apiKey}`
