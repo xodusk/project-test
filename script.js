@@ -197,17 +197,9 @@ async function showRecipes() {
             `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=10&apiKey=${apiKey}`
         );
         if (!res.ok) throw new Error(`API 오류: ${res.status}`);
-       
         const recipes = await res.json();
-        
-        // API 응답 확인
-        if (!Array.isArray(recipes)) {
-            list.innerHTML = `<li>❌ API 오류: ${JSON.stringify(recipes)}</li>`;
-            return;
-        }
 
         list.innerHTML = "";
-        
 
         if (!recipes || recipes.length === 0) {
     list.innerHTML = "<li>🔍 폐기 방법 검색 중...</li>";
