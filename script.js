@@ -210,32 +210,36 @@ async function showRecipes() {
     return;
 }
 
-       for (const r of recipes) {
+       // 🔥 제목 번역 테이블 (API 없이 번역)
+const recipeTitleTranslations = {
+    "Chicken": "닭고기", "chicken": "닭고기",
+    "Beef": "소고기", "beef": "소고기",
+    "Pork": "돼지고기", "pork": "돼지고기",
+    "Egg": "계란", "egg": "계란",
+    "Soup": "수프", "Stew": "스튜",
+    "Salad": "샐러드", "Pasta": "파스타",
+    "Rice": "밥", "Fried": "볶음",
+    "Baked": "구운", "Grilled": "구운",
+    "Roasted": "로스트", "Steamed": "찐",
+    "Sandwich": "샌드위치", "Burger": "버거",
+    "Pizza": "피자", "Cake": "케이크",
+    "Toast": "토스트", "Omelet": "오믈렛",
+    "Stir": "볶음", "Fry": "튀김",
+    "with": "와", "and": "와",
+};
+
+function translateTitle(title) {
+    let translated = title;
+    Object.entries(recipeTitleTranslations).forEach(([eng, kor]) => {
+        translated = translated.replace(new RegExp(eng, 'g'), kor);
+    });
+    return translated;
+}
+
+recipes.forEach(r => {
     const li = document.createElement("li");
     const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
-
-    // 🔥 Claude API로 제목 한글 번역
-    let koreanTitle = r.title;
-    try {
-        const translateRes = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                model: "claude-sonnet-4-20250514",
-                max_tokens: 100,
-                messages: [{
-                    role: "user",
-                    content: `다음 레시피 제목을 한글로 번역해줘. 번역된 제목만 출력해: "${r.title}"`
-                }]
-            })
-        });
-        const translateData = await translateRes.json();
-        koreanTitle = translateData.content[0].text.trim();
-    } catch (e) {
-        koreanTitle = r.title; // 번역 실패시 영어 그대로
-    }
+    const koreanTitle = translateTitle(r.title);
 
     li.innerHTML = `
         <div style="display:flex; gap:10px; align-items:center;">
@@ -248,7 +252,8 @@ async function showRecipes() {
         </div>
     `;
     list.appendChild(li);
-}
+});
+   
 
     } catch (err) {
         list.innerHTML = `<li>❌ 오류 발생: ${err.message}</li>`;
