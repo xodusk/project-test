@@ -200,6 +200,8 @@ async function showRecipes() {
 
     const recipes = await fetchRecipes(ingredients);
 
+    console.log("recipes:", recipes);
+
     const list = document.getElementById("recipeList");
     list.innerHTML = "";
 
