@@ -247,13 +247,14 @@ async function showRecipes() {
                 koreanIngredient = ingredient;
             }
 
-            // 해당 재료가 포함된 레시피만 필터링
-            const filtered = recipes.filter(r =>
+           const filtered = recipes.filter(r =>
                 r.usedIngredients.some(i =>
-                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                    i.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+                    ingredient.toLowerCase().includes(i.name.toLowerCase())
                 ) ||
                 r.missedIngredients.some(i =>
-                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                    i.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+                    ingredient.toLowerCase().includes(i.name.toLowerCase())
                 )
             );
 
@@ -366,7 +367,8 @@ const foodTranslations = {
     "치즈": "cheese", "버터": "butter",
     "요거트": "yogurt", "햄": "ham",
     "소시지": "sausage", "참치": "tuna",
-    "연어": "salmon", "새우": "shrimp",
+    "연어": "salmon", "새우": "shrimp", 
+"바나나": "banana",
 };
 
 function getUrgentIngredients() {
