@@ -210,21 +210,45 @@ async function showRecipes() {
     return;
 }
 
-        recipes.forEach(r => {
-            const li = document.createElement("li");
-            const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
+       for (const r of recipes) {
+    const li = document.createElement("li");
+    const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
 
-            li.innerHTML = `
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
-                    <div>
-                        <div>${r.title}</div>
-                        <button onclick="window.open('${recipeUrl}')">레시피 보기</button>
-                    </div>
-                </div>
-            `;
-            list.appendChild(li);
+    // 🔥 Claude API로 제목 한글 번역
+    let koreanTitle = r.title;
+    try {
+        const translateRes = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 100,
+                messages: [{
+                    role: "user",
+                    content: `다음 레시피 제목을 한글로 번역해줘. 번역된 제목만 출력해: "${r.title}"`
+                }]
+            })
         });
+        const translateData = await translateRes.json();
+        koreanTitle = translateData.content[0].text.trim();
+    } catch (e) {
+        koreanTitle = r.title; // 번역 실패시 영어 그대로
+    }
+
+    li.innerHTML = `
+        <div style="display:flex; gap:10px; align-items:center;">
+            <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
+            <div>
+                <div>${koreanTitle}</div>
+                <div style="font-size:12px; color:#999;">${r.title}</div>
+                <button onclick="window.open('${recipeUrl}')">레시피 보기</button>
+            </div>
+        </div>
+    `;
+    list.appendChild(li);
+}
 
     } catch (err) {
         list.innerHTML = `<li>❌ 오류 발생: ${err.message}</li>`;
