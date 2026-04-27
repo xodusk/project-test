@@ -177,6 +177,18 @@ function getDday(expiryDate) {
     return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
 }
 
+
+async function fetchRecipes(ingredients) {
+    const apiKey = "YOUR_API_KEY"; // ← 여기에 키 넣기
+
+    const res = await fetch(
+        `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=5&apiKey=${apiKey}`
+    );
+
+    return await res.json();
+}
+
+
 function getDiffDays(date) {
     const today = new Date();
     today.setHours(0,0,0,0);
