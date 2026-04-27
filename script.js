@@ -246,10 +246,33 @@ function getDiffDays(date) {
     return Math.ceil((d - today) / (1000*60*60*24));
 }
 
+// 한글 → 영어 번역 테이블
+const foodTranslations = {
+    "계란": "egg", "달걀": "egg",
+    "우유": "milk",
+    "두부": "tofu",
+    "돼지고기": "pork", "삼겹살": "pork belly",
+    "닭고기": "chicken", "닭가슴살": "chicken breast",
+    "소고기": "beef",
+    "양파": "onion", "마늘": "garlic",
+    "감자": "potato", "고구마": "sweet potato",
+    "당근": "carrot", "오이": "cucumber",
+    "토마토": "tomato", "버섯": "mushroom",
+    "시금치": "spinach", "배추": "cabbage",
+    "밥": "rice", "라면": "ramen",
+    "치즈": "cheese", "버터": "butter",
+    "요거트": "yogurt", "햄": "ham",
+    "소시지": "sausage", "참치": "tuna",
+    "연어": "salmon", "새우": "shrimp",
+};
+
 function getUrgentIngredients() {
     return foods
-        .filter(f => getDiffDays(f.expiryDate) <= 2) // 임박 식품만
-        .map(f => f.name);
+        .filter(f => getDiffDays(f.expiryDate) <= 2)
+        .map(f => {
+            const translated = foodTranslations[f.name.trim()];
+            return translated || f.name; // 번역 없으면 원래 이름 사용
+        });
 }
 
 // -------------------------
