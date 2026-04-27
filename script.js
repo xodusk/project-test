@@ -178,7 +178,6 @@ function getDday(expiryDate) {
 }
 
 
-
 async function showRecipes() {
     const ingredients = getUrgentIngredients();
 
@@ -192,12 +191,25 @@ async function showRecipes() {
 
     try {
         const apiKey = "afbed4806429490c832c5515e243e548";
+
+        // 한 번에 검색 (포인트 1번만 사용)
+        const res = await fetch(
+            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=10&apiKey=${apiKey}`
+        );
+        if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+        const recipes = await res.json();
+
         list.innerHTML = "";
 
-        // 재료별로 따로 검색
+        if (!recipes || recipes.length === 0) {
+            list.innerHTML = `<li>레시피를 찾지 못했습니다.<br>검색한 재료: ${ingredients.join(", ")}</li>`;
+            return;
+        }
+
+        // 재료별로 분류
         for (const ingredient of ingredients) {
 
-            // 재료명 한글 번역
+            // 재료 이름 한글 번역
             let koreanIngredient = ingredient;
             try {
                 const ingRes = await fetch(
@@ -209,27 +221,25 @@ async function showRecipes() {
                 koreanIngredient = ingredient;
             }
 
+            // 해당 재료가 포함된 레시피만 필터링
+            const filtered = recipes.filter(r =>
+                r.usedIngredients.some(i =>
+                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                ) ||
+                r.missedIngredients.some(i =>
+                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                )
+            );
+
+            if (filtered.length === 0) continue;
+
             // 섹션 제목
             const sectionTitle = document.createElement("li");
             sectionTitle.innerHTML = `<strong>🥬 ${koreanIngredient}으로 만들 수 있는 레시피</strong>`;
             sectionTitle.style.cssText = "background:#f0f9f0; padding:10px; border-radius:10px; margin-top:15px; list-style:none;";
             list.appendChild(sectionTitle);
 
-            // 재료별 레시피 검색
-            const ingRecipeRes = await fetch(
-                `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&apiKey=${apiKey}`
-            );
-            if (!ingRecipeRes.ok) throw new Error(`API 오류: ${ingRecipeRes.status}`);
-            const ingRecipes = await ingRecipeRes.json();
-
-            if (!ingRecipes || ingRecipes.length === 0) {
-                const empty = document.createElement("li");
-                empty.textContent = "레시피를 찾지 못했습니다.";
-                list.appendChild(empty);
-                continue;
-            }
-
-            for (const r of ingRecipes) {
+            for (const r of filtered) {
                 const li = document.createElement("li");
                 const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
 
@@ -263,6 +273,7 @@ async function showRecipes() {
         console.error(err);
     }
 }
+
 
 
        
