@@ -257,7 +257,38 @@ async function showRecipes() {
                 )
             );
 
-            if (filtered.length === 0) continue;
+            if (filtered.length === 0) {
+                // 해당 재료 레시피 없으면 폐기 방법 표시
+                const disposalLi = document.createElement("li");
+                disposalLi.style.cssText = "background:#fff8e1; padding:15px; border-radius:10px; list-style:none; margin-top:5px;";
+                disposalLi.innerHTML = `<strong>🗑️ 폐기 방법 검색 중...</strong>`;
+                list.appendChild(disposalLi);
+
+                try {
+                    const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: "claude-sonnet-4-20250514",
+                            max_tokens: 300,
+                            messages: [{
+                                role: "user",
+                                content: `${koreanIngredient}의 올바른 폐기 방법을 한국 기준으로 2-3줄로 짧게 알려줘.`
+                            }]
+                        })
+                    });
+                    const claudeData = await claudeRes.json();
+                    const disposalText = claudeData.content[0].text;
+                    disposalLi.innerHTML = `
+                        <strong>⚠️ ${koreanIngredient} 레시피를 찾지 못했습니다.</strong><br><br>
+                        <strong>🗑️ 올바른 폐기 방법</strong><br>
+                        <p style="white-space:pre-line; font-size:14px;">${disposalText}</p>
+                    `;
+                } catch (e) {
+                    disposalLi.innerHTML = `<strong>⚠️ ${koreanIngredient} 레시피를 찾지 못했습니다.</strong>`;
+                }
+                continue;
+            }
 
             // 섹션 제목
             const sectionTitle = document.createElement("li");
