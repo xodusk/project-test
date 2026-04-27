@@ -189,6 +189,42 @@ async function fetchRecipes(ingredients) {
 }
 
 
+async function showRecipes() {
+    const ingredients = getUrgentIngredients();
+
+    if (ingredients.length === 0) {
+        alert("임박한 재료가 없습니다");
+        return;
+    }
+
+    const recipes = await fetchRecipes(ingredients);
+
+    const list = document.getElementById("recipeList");
+    list.innerHTML = "";
+
+    recipes.forEach(r => {
+        const li = document.createElement("li");
+
+        li.innerHTML = `
+            <div style="display:flex; gap:10px; align-items:center;">
+                <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
+                <div>
+                    <div>${r.title}</div>
+                    <button onclick="window.open('${r.sourceUrl}')">레시피 보기</button>
+                </div>
+            </div>
+        `;
+
+        list.appendChild(li);
+    });
+}
+
+
+
+
+
+
+
 function getDiffDays(date) {
     const today = new Date();
     today.setHours(0,0,0,0);
