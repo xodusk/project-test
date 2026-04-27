@@ -178,16 +178,7 @@ function getDday(expiryDate) {
 }
 
 
-async function fetchRecipes(ingredients) {
-    const apiKey = "afbed4806429490c832c5515e243e548"
 
-
-    const res = await fetch(
-        `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=5&apiKey=${apiKey}`
-    );
-
-    return await res.json();
-}
 
 
 async function showRecipes() {
@@ -198,31 +189,48 @@ async function showRecipes() {
         return;
     }
 
-    const recipes = await fetchRecipes(ingredients);
-
-    console.log("recipes:", recipes);
-
     const list = document.getElementById("recipeList");
-    list.innerHTML = "";
+    list.innerHTML = "<li>🔍 레시피 검색 중...</li>";
 
-    recipes.forEach(r => {
-        const li = document.createElement("li");
+    try {
+        const apiKey = "afbed4806429490c832c5515e243e548";
+        const res = await fetch(
+            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=5&apiKey=${apiKey}`
+        );
 
-        li.innerHTML = `
-            <div style="display:flex; gap:10px; align-items:center;">
-                <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
-                <div>
-                    <div>${r.title}</div>
-                    <button onclick="window.open('${r.sourceUrl}')">레시피 보기</button>
+        if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+
+        const recipes = await res.json();
+        console.log("recipes:", recipes);
+
+        list.innerHTML = "";
+
+        if (!recipes || recipes.length === 0) {
+            list.innerHTML = "<li>레시피를 찾지 못했습니다.</li>";
+            return;
+        }
+
+        recipes.forEach(r => {
+            const li = document.createElement("li");
+            const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
+
+            li.innerHTML = `
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
+                    <div>
+                        <div>${r.title}</div>
+                        <button onclick="window.open('${recipeUrl}')">레시피 보기</button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+            list.appendChild(li);
+        });
 
-        list.appendChild(li);
-    });
+    } catch (err) {
+        list.innerHTML = `<li>❌ 오류 발생: ${err.message}</li>`;
+        console.error(err);
+    }
 }
-
-
 
 
 
