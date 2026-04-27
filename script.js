@@ -246,7 +246,7 @@ async function showRecipes() {
             } catch (e) {
                 koreanIngredient = ingredient;
             }
-
+            alert("전체 레시피 수: " + recipes.length + " / 재료: " + ingredient);
            const filtered = recipes.filter(r =>
                 r.usedIngredients.some(i =>
                     i.name.toLowerCase().includes(ingredient.toLowerCase()) ||
