@@ -353,15 +353,6 @@ function deleteFood(id) {
 }
 
 // -------------------------
-window.onload = () => {
-    const saved = localStorage.getItem("foods");
-    if (saved) foods = JSON.parse(saved);
-
-    document.getElementById("todayDate").textContent =
-        "오늘 날짜: " + new Date().toISOString().split("T")[0];
-
-    renderFoodList();
-};
 
 // -------------------------
 // 🔥 알림 관련 기능 추가
