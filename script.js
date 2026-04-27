@@ -177,6 +177,22 @@ function getDday(expiryDate) {
     return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
 }
 
+function getDiffDays(date) {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const d = new Date(date);
+    d.setHours(0,0,0,0);
+
+    return Math.ceil((d - today) / (1000*60*60*24));
+}
+
+function getUrgentIngredients() {
+    return foods
+        .filter(f => getDiffDays(f.expiryDate) <= 2) // 임박 식품만
+        .map(f => f.name);
+}
+
 // -------------------------
 function addFood() {
     const name = foodName.value.trim();
