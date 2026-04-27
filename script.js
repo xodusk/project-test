@@ -201,14 +201,14 @@ async function showRecipes() {
         if (!res.ok) throw new Error(`API 오류: ${res.status}`);
 
         const recipes = await res.json();
-        console.log("recipes:", recipes);
-
+        
         list.innerHTML = "";
 
         if (!recipes || recipes.length === 0) {
-            list.innerHTML = "<li>레시피를 찾지 못했습니다.</li>";
-            return;
-        }
+    // 🔥 어떤 재료로 검색했는지 화면에 표시
+    list.innerHTML = `<li>레시피를 찾지 못했습니다.<br>검색한 재료: ${ingredients.join(", ")}</li>`;
+    return;
+}
 
         recipes.forEach(r => {
             const li = document.createElement("li");
