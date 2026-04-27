@@ -210,32 +210,67 @@ async function showRecipes() {
     return;
 }
 
-      for (const r of recipes) {
-    const li = document.createElement("li");
-    const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
-
-    let koreanTitle = r.title;
+     // 재료별로 레시피 검색
+for (const ingredient of ingredients) {
+    // 재료 제목 한글로 번역
+    let koreanIngredient = ingredient;
     try {
-        const translateRes = await fetch(
-            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(r.title)}&langpair=en|ko`
+        const ingRes = await fetch(
+            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(ingredient)}&langpair=en|ko`
         );
-        const translateData = await translateRes.json();
-        koreanTitle = translateData.responseData.translatedText;
+        const ingData = await ingRes.json();
+        koreanIngredient = ingData.responseData.translatedText;
     } catch (e) {
-        koreanTitle = r.title;
+        koreanIngredient = ingredient;
     }
 
-    li.innerHTML = `
-        <div style="display:flex; gap:10px; align-items:center;">
-            <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
-            <div>
-                <div>${koreanTitle}</div>
-                <div style="font-size:12px; color:#999;">${r.title}</div>
-                <button onclick="window.open('${recipeUrl}')">레시피 보기</button>
+    // 재료별 섹션 제목
+    const sectionTitle = document.createElement("li");
+    sectionTitle.innerHTML = `<strong>🥬 ${koreanIngredient}(${ingredient})으로 만들 수 있는 레시피</strong>`;
+    sectionTitle.style.cssText = "background:#f0f9f0; padding:10px; border-radius:10px; margin-top:15px; list-style:none;";
+    list.appendChild(sectionTitle);
+
+    // 재료별 레시피 검색
+    const ingRecipeRes = await fetch(
+        `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&apiKey=${apiKey}`
+    );
+    if (!ingRecipeRes.ok) throw new Error(`API 오류: ${ingRecipeRes.status}`);
+    const ingRecipes = await ingRecipeRes.json();
+
+    if (!ingRecipes || ingRecipes.length === 0) {
+        const empty = document.createElement("li");
+        empty.textContent = "레시피를 찾지 못했습니다.";
+        list.appendChild(empty);
+        continue;
+    }
+
+    for (const r of ingRecipes) {
+        const li = document.createElement("li");
+        const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
+
+        let koreanTitle = r.title;
+        try {
+            const translateRes = await fetch(
+                `https://api.mymemory.translated.net/get?q=${encodeURIComponent(r.title)}&langpair=en|ko`
+            );
+            const translateData = await translateRes.json();
+            koreanTitle = translateData.responseData.translatedText;
+        } catch (e) {
+            koreanTitle = r.title;
+        }
+
+        li.innerHTML = `
+            <div style="display:flex; gap:10px; align-items:center;">
+                <img src="${r.image}" style="width:80px; height:80px; border-radius:10px;">
+                <div>
+                    <div>${koreanTitle}</div>
+                    <div style="font-size:12px; color:#999;">${r.title}</div>
+                    <button onclick="window.open('${recipeUrl}')">레시피 보기</button>
+                </div>
             </div>
-        </div>
-    `;
-    list.appendChild(li);
+        `;
+        list.appendChild(li);
+    }
 }
 
     } catch (err) {
