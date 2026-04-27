@@ -210,36 +210,20 @@ async function showRecipes() {
     return;
 }
 
-       // 🔥 제목 번역 테이블 (API 없이 번역)
-const recipeTitleTranslations = {
-    "Chicken": "닭고기", "chicken": "닭고기",
-    "Beef": "소고기", "beef": "소고기",
-    "Pork": "돼지고기", "pork": "돼지고기",
-    "Egg": "계란", "egg": "계란",
-    "Soup": "수프", "Stew": "스튜",
-    "Salad": "샐러드", "Pasta": "파스타",
-    "Rice": "밥", "Fried": "볶음",
-    "Baked": "구운", "Grilled": "구운",
-    "Roasted": "로스트", "Steamed": "찐",
-    "Sandwich": "샌드위치", "Burger": "버거",
-    "Pizza": "피자", "Cake": "케이크",
-    "Toast": "토스트", "Omelet": "오믈렛",
-    "Stir": "볶음", "Fry": "튀김",
-    "with": "와", "and": "와",
-};
-
-function translateTitle(title) {
-    let translated = title;
-    Object.entries(recipeTitleTranslations).forEach(([eng, kor]) => {
-        translated = translated.replace(new RegExp(eng, 'g'), kor);
-    });
-    return translated;
-}
-
-recipes.forEach(r => {
+      for (const r of recipes) {
     const li = document.createElement("li");
     const recipeUrl = `https://spoonacular.com/recipes/${r.title.replace(/ /g, '-')}-${r.id}`;
-    const koreanTitle = translateTitle(r.title);
+
+    let koreanTitle = r.title;
+    try {
+        const translateRes = await fetch(
+            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(r.title)}&langpair=en|ko`
+        );
+        const translateData = await translateRes.json();
+        koreanTitle = translateData.responseData.translatedText;
+    } catch (e) {
+        koreanTitle = r.title;
+    }
 
     li.innerHTML = `
         <div style="display:flex; gap:10px; align-items:center;">
@@ -252,8 +236,7 @@ recipes.forEach(r => {
         </div>
     `;
     list.appendChild(li);
-});
-   
+}
 
     } catch (err) {
         list.innerHTML = `<li>❌ 오류 발생: ${err.message}</li>`;
