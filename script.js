@@ -136,63 +136,6 @@ function stopCamera() {
 }
 
 // -------------------------
-function captureImage() {
-    if (!cameraOn || !mode) {
-        alert("스캔 모드를 선택하세요!");
-        return;
-    }
-
-    const video = document.getElementById("camera");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // 🔥 이미지 전처리 (개선된 필터)
-    ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
-    ctx.drawImage(video, 0, 0);
-
-    // 🔥 👉 여기 추가 (핵심)
-    const imageData = canvas.toDataURL();
-
-    // 미리보기 표시
-    document.getElementById("preview").src = imageData;
-
-    // 리스트에 저장하기 위한 이미지
-    lastCapturedImage = imageData;
-
-    // -------------------------
-    // 📌 바코드
-    // -------------------------
-    if (mode === "barcode") {
-        const codeReader = new ZXing.BrowserBarcodeReader();
-
-        const image = new Image();
-        image.src = imageData; // 🔥 canvas.toDataURL() 대신 변수 사용
-
-        image.onload = () => {
-            codeReader.decodeFromImageElement(image)
-                .then(result => {
-                    const barcode = result.text;
-
-                    fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status === 1 && data.product.product_name) {
-                                document.getElementById("foodName").value =
-                                    data.product.product_name;
-                                alert("상품명 자동 입력 완료!");
-                            } else {
-                                document.getElementById("foodName").value = barcode;
-                                alert("상품 정보 없음");
-                            }
-                        });
-                })
-                .catch(() => alert("바코드 인식 실패"));
-        };
-    }
-
     // -------------------------
     // 📌 OCR (기존 그대로 유지)
     // -------------------------
