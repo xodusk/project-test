@@ -304,7 +304,7 @@ const foodTranslations = {
     "계란": "egg", "달걀": "egg",
     "우유": "milk",
     "두부": "tofu",
-    "돼지고기": "pork", "삼겹살": "pork belly",
+    "돼지고기": "pork", "삼겹살": "pork",
     "닭고기": "chicken", "닭가슴살": "chicken breast",
     "소고기": "beef",
     "양파": "onion", "마늘": "garlic",
