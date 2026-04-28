@@ -27,8 +27,11 @@
         <button onclick="startBarcodeMode()">상품명 스캔</button>
         <button onclick="startOcrMode()">유통기한 스캔</button>
 
-        <video id="camera" autoplay playsinline></video>
-        <button id="captureBtn" onclick="captureImage()" disabled>촬영</button>
+        <div class="camera-wrapper">
+            <video id="camera" autoplay playsinline></video>
+            <div id="scanBox"></div>
+        </div>
+
         <button onclick="clearCamera()">촬영 종료</button>
 
         <canvas id="canvas" style="display:none;"></canvas>
