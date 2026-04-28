@@ -177,6 +177,7 @@ function getDday(expiryDate) {
     return "❌ 만료됨 (빠른 시일 내에 처리하세요)";
 }
 
+
 async function showRecipes() {
     const ingredients = getUrgentIngredients();
 
@@ -191,21 +192,20 @@ async function showRecipes() {
     try {
         const apiKey = "afbed4806429490c832c5515e243e548";
 
-        // 한 번에 검색 (포인트 1번만 사용)
+        // 포인트 1번만 사용
         const res = await fetch(
-            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=10&apiKey=${apiKey}`
+            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredients.join(",")}&number=30&ranking=2&apiKey=${apiKey}`
         );
         if (!res.ok) throw new Error(`API 오류: ${res.status}`);
         const recipes = await res.json();
 
-        list.innerHTML = "";
-
-        if (!recipes || recipes.length === 0) {
-            list.innerHTML = `<li>레시피를 찾지 못했습니다.<br>검색한 재료: ${ingredients.join(", ")}</li>`;
+        if (!Array.isArray(recipes)) {
+            list.innerHTML = `<li>❌ API 오류: ${JSON.stringify(recipes)}</li>`;
             return;
         }
 
-        // 재료별로 분류
+        list.innerHTML = "";
+
         for (const ingredient of ingredients) {
 
             // 재료 이름 한글 번역
@@ -220,23 +220,31 @@ async function showRecipes() {
                 koreanIngredient = ingredient;
             }
 
-            // 해당 재료가 포함된 레시피만 필터링
+            // 해당 재료 포함된 레시피 최대 3개 필터링
             const filtered = recipes.filter(r =>
                 r.usedIngredients.some(i =>
-                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                    i.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+                    ingredient.toLowerCase().includes(i.name.toLowerCase())
                 ) ||
                 r.missedIngredients.some(i =>
-                    i.name.toLowerCase().includes(ingredient.toLowerCase())
+                    i.name.toLowerCase().includes(ingredient.toLowerCase()) ||
+                    ingredient.toLowerCase().includes(i.name.toLowerCase())
                 )
-            );
-
-            if (filtered.length === 0) continue;
+            ).slice(0, 3);
 
             // 섹션 제목
             const sectionTitle = document.createElement("li");
             sectionTitle.innerHTML = `<strong>🥬 ${koreanIngredient}으로 만들 수 있는 레시피</strong>`;
             sectionTitle.style.cssText = "background:#f0f9f0; padding:10px; border-radius:10px; margin-top:15px; list-style:none;";
             list.appendChild(sectionTitle);
+
+            if (filtered.length === 0) {
+                const emptyLi = document.createElement("li");
+                emptyLi.textContent = "레시피를 찾지 못했습니다.";
+                emptyLi.style.cssText = "color:#999; font-size:14px; padding:8px;";
+                list.appendChild(emptyLi);
+                continue;
+            }
 
             for (const r of filtered) {
                 const li = document.createElement("li");
@@ -269,12 +277,8 @@ async function showRecipes() {
 
     } catch (err) {
         list.innerHTML = `<li>❌ 오류 발생: ${err.message}</li>`;
-        console.error(err);
     }
 }
-
-        
-
 
 
 
