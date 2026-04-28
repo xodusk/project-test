@@ -3,6 +3,7 @@ let stream = null;
 let foods = [];
 let mode = null;
 let lastCapturedImage = null;
+let scanInterval = null;
 
 // -------------------------
 function startBarcodeMode() {
@@ -24,31 +25,114 @@ function startCamera() {
     const video = document.getElementById("camera");
 
     navigator.mediaDevices.getUserMedia({
-        video: {
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-        }
+        video: { facingMode: "environment" }
     })
     .then(s => {
         stream = s;
         video.srcObject = stream;
         cameraOn = true;
-        document.getElementById("captureBtn").disabled = false;
-    })
-    .catch(() => {
-        alert("카메라 권한 허용 필요!");
-    });
-}
 
+        startAutoScan(); // 🔥 여기 추가
+    })
+    .catch(() => alert("카메라 권한 필요"));
+}
+function startAutoScan() {
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    scanInterval = setInterval(() => {
+        if (!cameraOn || !mode) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const w = canvas.width;
+        const h = canvas.height;
+
+        const cropW = w * 0.7;
+        const cropH = h * 0.25;
+
+        const x = (w - cropW) / 2;
+        const y = (h - cropH) / 2;
+
+        ctx.drawImage(video, x, y, cropW, cropH, 0, 0, w, h);
+
+        const imageData = canvas.toDataURL();
+
+        document.getElementById("preview").src = imageData;
+        lastCapturedImage = imageData;
+
+        if (mode === "barcode") {
+            const codeReader = new ZXing.BrowserBarcodeReader();
+            const img = new Image();
+            img.src = imageData;
+
+            img.onload = () => {
+                codeReader.decodeFromImageElement(img)
+                    .then(result => {
+                        clearInterval(scanInterval);
+
+                        fetch(`https://world.openfoodfacts.org/api/v0/product/${result.text}.json`)
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById("foodName").value =
+                                    data.product?.product_name || result.text;
+
+                                alert("상품명 자동 인식 완료!");
+                                stopCamera();
+                            });
+                    })
+                    .catch(() => {});
+            };
+        }
+
+        else if (mode === "ocr") {
+            ctx.filter = "grayscale(100%) contrast(200%)";
+
+            Tesseract.recognize(canvas, 'eng+kor')
+                .then(result => {
+                    let text = result.data.text.replace(/\s/g, "");
+
+                    const match = text.match(
+                        /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/
+                    );
+
+                    if (match) {
+                        clearInterval(scanInterval);
+
+                        const clean = match[0]
+                            .replace(/년|월/g, "-")
+                            .replace(/[.\//]/g, "-")
+                            .split("-")
+                            .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
+                            .join("-");
+
+                        document.getElementById("expiryDate").value = clean;
+
+                        alert("유통기한 자동 인식 완료!");
+                        stopCamera();
+                    }
+                })
+                .catch(() => {});
+        }
+
+    }, 800);
+}
 function stopCamera() {
     if (stream) {
         stream.getTracks().forEach(track => track.stop());
         stream = null;
     }
+
+    if (scanInterval) {
+        clearInterval(scanInterval);
+        scanInterval = null;
+    }
+
     document.getElementById("camera").srcObject = null;
     cameraOn = false;
-    document.getElementById("captureBtn").disabled = true;
+
 }
 
 // -------------------------
