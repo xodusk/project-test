@@ -134,22 +134,6 @@ function stopCamera() {
 
 }
 
-// -------------------------
-    // -------------------------
-    // 📌 OCR (기존 그대로 유지)
-    // -------------------------
-    else if (mode === "ocr") {
-        const status = document.getElementById("statusMessage");
-        status.textContent = "🔍 분석 중...";
-
-        Tesseract.recognize(canvas, 'eng+kor')
-            .then(result => {
-                let text = result.data.text;
-                text = text.replace(/\s/g, "");
-
-                const matches = text.match(
-                    /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/g
-                );
 
                 if (matches) {
                     status.innerHTML = "날짜 선택:<br>";
