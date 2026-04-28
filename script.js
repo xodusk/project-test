@@ -50,8 +50,8 @@ function startAutoScan() {
         const w = canvas.width;
         const h = canvas.height;
 
-        const cropW = w * 0.7;
-        const cropH = h * 0.25;
+        const cropW = w * 0.6;
+        const cropH = h * 0.15;
 
         const x = (w - cropW) / 2;
         const y = (h - cropH) / 2;
@@ -96,7 +96,10 @@ function startAutoScan() {
 
             Tesseract.recognize(canvas, 'eng+kor')
                 .then(result => {
-                    let text = result.data.text.replace(/\s/g, "");
+                    let text = result.data.text
+                        .replace(/\s/g, "")
+                        .replace(/O/g, "0")
+                        .replace(/I/g, "1");
 
                     const match = text.match(
                         /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/
@@ -121,7 +124,7 @@ function startAutoScan() {
                 .catch(() => {});
         }
 
-    }, 800);
+    }, 1200);
 }
 function stopCamera() {
     if (stream) {
