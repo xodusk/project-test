@@ -94,35 +94,37 @@ function startAutoScan() {
 
         else if (mode === "ocr") {
 
-            Tesseract.recognize(canvas, 'eng+kor')
-                .then(result => {
-                    let text = result.data.text
-                        .replace(/\s/g, "")
-                        .replace(/O/g, "0")
-                        .replace(/I/g, "1");
+    Tesseract.recognize(canvas, 'eng+kor')
+        .then(result => {
+            let text = result.data.text
+                .replace(/\s/g, "")
+                .replace(/O/g, "0")
+                .replace(/I/g, "1");
 
-                    const match = text.match(
-                        /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/
-                    );
+            const matches = text.match(
+                /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/g
+            );
 
-                    if (match) {
-                        clearInterval(scanInterval);
+            if (matches) {
+                clearInterval(scanInterval);
 
-                        const clean = match[0]
-                            .replace(/년|월/g, "-")
-                            .replace(/[.\//]/g, "-")
-                            .split("-")
-                            .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
-                            .join("-");
+                const date = matches[0];
 
-                        document.getElementById("expiryDate").value = clean;
+                const clean = date
+                    .replace(/년|월/g, "-")
+                    .replace(/[.\//]/g, "-")
+                    .split("-")
+                    .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
+                    .join("-");
 
-                        alert("유통기한 자동 인식 완료!");
-                        stopCamera();
-                    }
-                })
-                .catch(() => {});
-        }
+                document.getElementById("expiryDate").value = clean;
+
+                alert("유통기한 자동 인식 완료!");
+                stopCamera();
+            }
+        })
+        .catch(() => {});
+}
 
     }, 1200);
 }
@@ -142,32 +144,6 @@ function stopCamera() {
 
 }
 
-
-                if (matches) {
-                    status.innerHTML = "날짜 선택:<br>";
-
-                    matches.forEach(date => {
-                        const btn = document.createElement("button");
-                        btn.textContent = date;
-
-                        btn.onclick = () => {
-                            const clean = date
-                                .replace(/년|월/g, "-")
-                                .replace(/[.\//]/g, "-")
-                                .split("-")
-                                .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
-                                .join("-");
-
-                            document.getElementById("expiryDate").value = clean;
-                            status.innerHTML = "";
-                        };
-
-                        status.appendChild(btn);
-                    });
-                } else {
-                    alert("유통기한 인식 실패");
-                    status.textContent = "";
-                }
             });
     }
 
