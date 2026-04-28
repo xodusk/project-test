@@ -55,7 +55,12 @@ function startAutoScan() {
 
         const x = (w - cropW) / 2;
         const y = (h - cropH) / 2;
-        ctx.filter = "grayscale(100%) contrast(200%)";
+        // 🔥 drawImage 전에!
+        if (mode === "barcode") {
+            ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
+        } else if (mode === "ocr") {
+            ctx.filter = "grayscale(100%) contrast(220%) brightness(130%)";
+        }
         ctx.drawImage(video, x, y, cropW, cropH, 0, 0, w, h);
 
         const imageData = canvas.toDataURL();
