@@ -144,12 +144,6 @@ function stopCamera() {
 
 }
 
-            });
-    }
-
-    stopCamera();
-}
-
 // -------------------------
 function clearCamera() {
     stopCamera();
