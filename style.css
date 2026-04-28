@@ -128,3 +128,27 @@ video {
     font-size: 13px;
     margin: 0;
 }
+/* 🔥 카메라 wrapper */
+.camera-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* 기존 video 유지 */
+#camera {
+    width: 100%;
+    border-radius: 16px;
+}
+
+/* 🔥 네모 박스 */
+#scanBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 25%;
+    transform: translate(-50%, -50%);
+    border: 3px solid #4CAF50;
+    border-radius: 12px;
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.4);
+}
