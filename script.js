@@ -178,6 +178,12 @@ function getDday(expiryDate) {
 }
 
 
+function clearRecipeCache() {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith("recipe_"));
+    keys.forEach(k => localStorage.removeItem(k));
+    alert("캐시 초기화 완료! 다시 레시피 추천을 눌러주세요.");
+}
+
 async function showRecipes() {
     const ingredients = getUrgentIngredients();
 
