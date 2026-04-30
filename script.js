@@ -218,8 +218,9 @@ async function showRecipes() {
                     recipes = JSON.parse(cached);
                 } else {
                     // 재료별로 따로 검색 (각 3개씩)
+                   const randomOffset = Math.floor(Math.random() * 10);
                     const res = await fetch(
-                        `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&apiKey=${apiKey}`
+                        `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&offset=${randomOffset}&apiKey=${apiKey}`
                     );
                     if (!res.ok) throw new Error(`API 오류: ${res.status}`);
                     recipes = await res.json();
