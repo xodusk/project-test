@@ -151,4 +151,5 @@ video {
     border: 3px solid #4CAF50;
     border-radius: 12px;
     box-shadow: 0 0 0 2000px rgba(0,0,0,0.4);
+    display: none;
 }
