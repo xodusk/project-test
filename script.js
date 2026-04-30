@@ -209,16 +209,14 @@ async function showRecipes() {
             sectionTitle.style.cssText = "background:#f0f9f0; padding:10px; border-radius:10px; margin-top:15px; list-style:none;";
             list.appendChild(sectionTitle);
 
-            // 캐시 확인 (오늘 날짜 기준 - 포인트 절약)
-            const cacheKey = `recipe_${ingredient}_${today}`;
+           const randomOffset = Math.floor(Math.random() * 10);
+            const cacheKey = `recipe_${ingredient}_${today}_${randomOffset}`;
             let recipes = null;
             try {
                 const cached = localStorage.getItem(cacheKey);
                 if (cached) {
                     recipes = JSON.parse(cached);
                 } else {
-                    // 재료별로 따로 검색 (각 3개씩)
-                   const randomOffset = Math.floor(Math.random() * 10);
                     const res = await fetch(
                         `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&offset=${randomOffset}&apiKey=${apiKey}`
                     );
