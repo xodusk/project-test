@@ -310,10 +310,10 @@ const foodTranslations = {
 
 function getUrgentIngredients() {
     return foods
-        .filter(f => getDiffDays(f.expiryDate) <= 2)
+        .filter(f => getDiffDays(f.expiryDate) <= 2 && getDiffDays(f.expiryDate) >= 0)
         .map(f => {
             const translated = foodTranslations[f.name.trim()];
-            return translated || f.name; // 번역 없으면 원래 이름 사용
+            return translated || f.name;
         });
 }
 
