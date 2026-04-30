@@ -209,7 +209,7 @@ async function showRecipes() {
             sectionTitle.style.cssText = "background:#f0f9f0; padding:10px; border-radius:10px; margin-top:15px; list-style:none;";
             list.appendChild(sectionTitle);
 
-           const randomOffset = Math.floor(Math.random() * 10);
+           const randomOffset = Math.floor(Math.random() * 5);
             const cacheKey = `recipe_${ingredient}_${today}_${randomOffset}`;
             let recipes = null;
             try {
@@ -217,11 +217,21 @@ async function showRecipes() {
                 if (cached) {
                     recipes = JSON.parse(cached);
                 } else {
-                    const res = await fetch(
+                    let res = await fetch(
                         `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&offset=${randomOffset}&apiKey=${apiKey}`
                     );
                     if (!res.ok) throw new Error(`API 오류: ${res.status}`);
                     recipes = await res.json();
+
+                    // 결과 없으면 offset 0으로 재시도
+                    if (!Array.isArray(recipes) || recipes.length === 0) {
+                        res = await fetch(
+                            `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${ingredient}&number=3&offset=0&apiKey=${apiKey}`
+                        );
+                        if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+                        recipes = await res.json();
+                    }
+
                     if (Array.isArray(recipes)) {
                         localStorage.setItem(cacheKey, JSON.stringify(recipes));
                     }
