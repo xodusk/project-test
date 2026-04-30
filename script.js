@@ -31,7 +31,7 @@ function startCamera() {
         stream = s;
         video.srcObject = stream;
         cameraOn = true;
-
+        document.getElementById("scanBox").style.display = "block";
         startAutoScan(); // 🔥 여기 추가
     })
     .catch(() => alert("카메라 권한 필요"));
@@ -141,6 +141,7 @@ function stopCamera() {
 
     document.getElementById("camera").srcObject = null;
     cameraOn = false;
+    document.getElementById("scanBox").style.display = "none";
 
 }
 
