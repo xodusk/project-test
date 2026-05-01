@@ -1,16 +1,3 @@
-function switchTab(tab) {
-    // 모든 탭 숨기기
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-
-    // 선택한 탭 보이기
-    document.getElementById(`tab-${tab}`).style.display = 'block';
-    event.target.classList.add('active');
-
-    // 탭 전환 시 카메라 끄기
-    if (tab !== 'add') stopCamera();
-}
-
 let cameraOn = false;
 let stream = null;
 let foods = [];
