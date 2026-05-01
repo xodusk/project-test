@@ -65,8 +65,10 @@ function startAutoScan() {
 
         const imageData = canvas.toDataURL();
 
-        document.getElementById("preview").src = imageData;
-        lastCapturedImage = imageData;
+        if (mode === "ocr") {
+            document.getElementById("preview").src = imageData;
+        }
+        //lastCapturedImage = imageData;
 
         if (mode === "barcode") {
             const codeReader = new ZXing.BrowserBarcodeReader();
@@ -81,12 +83,23 @@ function startAutoScan() {
                         fetch(`https://world.openfoodfacts.org/api/v0/product/${result.text}.json`)
                             .then(res => res.json())
                             .then(data => {
-                                document.getElementById("foodName").value =
-                                    data.product?.product_name || result.text;
+                                const product = data.product;
 
-                                alert("상품명 자동 인식 완료!");
-                                stopCamera();
-                            });
+                                const name = product?.product_name || result.text;
+                                document.getElementById("foodName").value = name;
+
+    // 🔥 여기 추가 (핵심)
+                                if (product?.image_url) {
+                                lastCapturedImage = product.image_url;
+                                document.getElementById("preview").src = product.image_url;
+                             } else {
+                                lastCapturedImage = null;
+                                document.getElementById("preview").src = "";
+                            }
+
+                            alert("상품명 + 이미지 자동 인식 완료!");
+                            stopCamera();
+                        });
                     })
                     .catch(() => {});
             };
