@@ -13,53 +13,52 @@
 </head>
 <body>
     <div class="container">
-        <!-- 탭 메뉴 -->
-        <div class="tab-menu">
-            <button class="tab-btn active" onclick="switchTab('home')">🏠 홈</button>
-            <button class="tab-btn" onclick="switchTab('add')">➕ 추가</button>
-            <button class="tab-btn" onclick="switchTab('recipe')">🍳 레시피</button>
+        <h1>유통기한 관리</h1>
+
+        <input type="text" id="foodName" placeholder="식품 이름 입력" />
+        <input type="date" id="expiryDate" />
+
+        <button onclick="addFood()">추가</button>
+
+        <p id="todayDate"></p>
+        <p id="statusMessage"></p>
+
+        <h3>카메라 입력</h3>
+        <button onclick="startBarcodeMode()">상품명 스캔</button>
+        <button onclick="startOcrMode()">유통기한 스캔</button>
+
+        <div class="camera-wrapper">
+            <video id="camera" autoplay playsinline></video>
+            <div id="scanBox"></div>
         </div>
 
-        <!-- 홈 탭 -->
-        <div id="tab-home" class="tab-content">
-            <h1>유통기한 관리</h1>
-            <p id="todayDate"></p>
-            <h3>🟢 유통기한 남은 식품</h3>
-            <ul id="validList"></ul>
-            <h3>❌ 유통기한 지난 식품</h3>
-            <ul id="expiredList"></ul>
-        </div>
+        <button onclick="clearCamera()">촬영 종료</button>
 
-        <!-- 추가 탭 -->
-        <div id="tab-add" class="tab-content" style="display:none;">
-            <h1>식품 추가</h1>
-            <input type="text" id="foodName" placeholder="식품 이름 입력" />
-            <input type="date" id="expiryDate" />
-            <button onclick="addFood()">추가</button>
-            <p id="statusMessage"></p>
-            <h3>카메라 입력</h3>
-            <button onclick="startBarcodeMode()">상품명 스캔</button>
-            <button onclick="startOcrMode()">유통기한 스캔</button>
-            <div class="camera-wrapper">
-                <video id="camera" autoplay playsinline></video>
-                <div id="scanBox"></div>
-            </div>
-            <button onclick="clearCamera()">촬영 종료</button>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <img id="preview" style="width:100%; border-radius:12px; margin-top:10px; display:none;" />
-        </div>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <img id="preview" style="width:100%; border-radius:12px; margin-top:10px; display:none;" />
 
-        <!-- 레시피 탭 -->
-        <div id="tab-recipe" class="tab-content" style="display:none;">
-            <h1>추천 레시피</h1>
-            <button onclick="showRecipes()">레시피 추천 받기</button>
-            <button onclick="clearRecipeCache()" style="background:#ff4d4f; color:white;">레시피 캐시 초기화</button>
-            <ul id="recipeList"></ul>
-        </div>
+        <hr>
+
+        <h3>등록된 식품</h3>
+        <h3>🟢 유통기한 남은 식품</h3>
+        <ul id="validList"></ul>
+
+        <h3>❌ 유통기한 지난 식품</h3>
+        <ul id="expiredList"></ul>
+     
+
+
+<h3>🍳 추천 레시피</h3>
+<button onclick="showRecipes()">레시피 추천 받기</button>
+<button onclick="clearRecipeCache()" style="background:#ff4d4f; color:white;">레시피 캐시 초기화</button>
+<ul id="recipeList"></ul>
+
     </div>
+
     <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="script.js"></script>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
