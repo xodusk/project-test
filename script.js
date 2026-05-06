@@ -1,3 +1,10 @@
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).style.display = 'block';
+    btn.classList.add('active');
+    if (tab !== 'input') stopCamera();
+}
 let cameraOn = false;
 let stream = null;
 let foods = [];
