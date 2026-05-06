@@ -153,3 +153,24 @@ video {
     box-shadow: 0 0 0 2000px rgba(0,0,0,0.4);
     display: none;
 }
+.tab-menu {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    background: #f0f0f0;
+    color: #666;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+.tab-btn.active {
+    background: #4CAF50;
+    color: white;
+}
