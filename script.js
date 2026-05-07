@@ -122,25 +122,11 @@ function startAutoScan() {
                 .replace(/I/g, "1");
 
             const matches = text.match(
-                /\d{2,4}[.\-\/년]\d{1,2}[.\-\/월]\d{1,2}/g
+                /\d{2,4}[.\-\/]\d{1,2}[.\-\/]\d{1,2}|\d{6,8}/g
             );
 
             if (matches) {
-                clearInterval(scanInterval);
-
-                const date = matches[0];
-
-                const clean = date
-                    .replace(/년|월/g, "-")
-                    .replace(/[.\//]/g, "-")
-                    .split("-")
-                    .map((v, i) => i === 0 ? v : v.padStart(2, "0"))
-                    .join("-");
-
-                document.getElementById("expiryDate").value = clean;
-
-                alert("유통기한 자동 인식 완료!");
-                stopCamera();
+                showDateCandidates(matches);
             }
         })
         .catch(() => {});
@@ -502,3 +488,53 @@ window.onload = async () => {
     // 🔥 앱을 켜놓고 있을 때 1분마다 주기적으로 체크 (선택사항)
     setInterval(checkExpiryNotifications, 60000);
 };
+function showDateCandidates(matches) {
+
+    clearInterval(scanInterval);
+
+    const container = document.getElementById("dateCandidates");
+
+    container.innerHTML = "";
+
+    const unique = [...new Set(matches)];
+
+    unique.forEach(raw => {
+
+        let clean = raw
+            .replace(/년|월/g, "-")
+            .replace(/[.\//]/g, "-");
+
+        // 260501 → 2026-05-01
+        if (/^\d{6}$/.test(clean)) {
+            clean =
+                `20${clean.slice(0,2)}-${clean.slice(2,4)}-${clean.slice(4,6)}`;
+        }
+
+        const btn = document.createElement("button");
+
+        btn.textContent = clean;
+
+        btn.style.cssText = `
+            margin:5px;
+            padding:8px 12px;
+            border:none;
+            border-radius:8px;
+            background:#4CAF50;
+            color:white;
+            cursor:pointer;
+        `;
+
+        btn.onclick = () => {
+
+            document.getElementById("expiryDate").value = clean;
+
+            alert("유통기한 선택 완료!");
+
+            container.innerHTML = "";
+
+            stopCamera();
+        };
+
+        container.appendChild(btn);
+    });
+}
