@@ -114,7 +114,9 @@ function startAutoScan() {
 
         else if (mode === "ocr") {
 
-    Tesseract.recognize(canvas, 'eng')
+    Tesseract.recognize(canvas, 'eng', {
+        tessedit_char_whitelist: '0123456789./-'
+    })
         .then(result => {
             let text = result.data.text
                 .replace(/\s/g, "")
