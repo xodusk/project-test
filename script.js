@@ -58,7 +58,7 @@ function startAutoScan() {
         const h = canvas.height;
 
         const cropW = w * 0.6;
-        const cropH = h * 0.15;
+        const cropH = h * 0.25;
 
         const x = (w - cropW) / 2;
         const y = (h - cropH) / 2;
@@ -66,7 +66,7 @@ function startAutoScan() {
         if (mode === "barcode") {
             ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
         } else if (mode === "ocr") {
-            ctx.filter = "grayscale(100%) contrast(220%) brightness(130%)";
+            ctx.filter = "grayscale(100%) contrast(160%) brightness(115%)";
         }
         ctx.drawImage(video, x, y, cropW, cropH, 0, 0, w, h);
 
@@ -114,7 +114,7 @@ function startAutoScan() {
 
         else if (mode === "ocr") {
 
-    Tesseract.recognize(canvas, 'eng+kor')
+    Tesseract.recognize(canvas, 'eng')
         .then(result => {
             let text = result.data.text
                 .replace(/\s/g, "")
