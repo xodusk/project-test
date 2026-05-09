@@ -11,6 +11,7 @@ let foods = [];
 let mode = null;
 let lastCapturedImage = null;
 let scanInterval = null;
+const codeReader = new ZXing.BrowserMultiFormatReader();
 
 // -------------------------
 function startBarcodeMode() {
@@ -66,9 +67,18 @@ function startAutoScan() {
         if (mode === "barcode") {
             ctx.filter = "contrast(150%) brightness(110%) grayscale(100%)";
         } else if (mode === "ocr") {
-            ctx.filter = "grayscale(100%) contrast(160%) brightness(115%)";
+            ctx.filter = "grayscale(100%) contrast(250%) brightness(140%)";
         }
-        ctx.drawImage(video, x, y, cropW, cropH, 0, 0, w, h);
+        canvas.width = cropW * 2;
+        canvas.height = cropH * 2;
+
+        ctx.drawImage(
+            video,
+            x, y, cropW, cropH,
+            0, 0,
+            cropW * 2,
+            cropH * 2
+        );
 
         const imageData = canvas.toDataURL();
 
@@ -78,7 +88,6 @@ function startAutoScan() {
         //lastCapturedImage = imageData;
 
         if (mode === "barcode") {
-            const codeReader = new ZXing.BrowserBarcodeReader();
             const img = new Image();
             img.src = imageData;
 
@@ -124,7 +133,7 @@ function startAutoScan() {
                 .replace(/I/g, "1");
 
             const matches = text.match(
-                /\d{2,4}[.\-\/]\d{1,2}[.\-\/]\d{1,2}|\d{6,8}/g
+                /\b\d{2,4}[.\-\/]\d{1,2}[.\-\/]\d{1,2}\b|\b\d{6,8}\b/g
             );
 
             if (matches) {
