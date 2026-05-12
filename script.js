@@ -381,8 +381,8 @@ function renderFoodList() {
 
     if (foods.length === 0) {
         validList.innerHTML = `
-            <li style="list-style:none; text-align:center; color:#999; padding:20px; font-size:15px;">
-                아직 등록된 식품이 없습니다 😊
+            <li class="empty-message">
+                🥬 아직 등록된 식품이 없습니다
             </li>
         `;
         return;
