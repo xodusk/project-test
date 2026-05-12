@@ -174,3 +174,16 @@ video {
     background: #4CAF50;
     color: white;
 }
+
+button:active {
+    transform: scale(0.97);
+}
+
+.urgent {
+    border: 2px solid #ff9800;
+}
+
+.expired {
+    border: 2px solid #ff4d4f;
+    opacity: 0.7;
+}
