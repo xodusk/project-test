@@ -58,8 +58,21 @@ function startAutoScan() {
         const w = canvas.width;
         const h = canvas.height;
 
-        const cropW = w * 0.6;
-        const cropH = h * 0.25;
+        let cropW;
+        let cropH;
+
+        if (mode === "barcode") {
+
+    // 바코드는 넓게
+            cropW = w * 0.6;
+            cropH = h * 0.25;
+
+        } else if (mode === "ocr") {
+
+    // 유통기한은 한 줄만 읽도록 얇게
+            cropW = w * 0.55;
+            cropH = h * 0.08;
+        }
 
         const x = (w - cropW) / 2;
         const y = (h - cropH) / 2;
