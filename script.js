@@ -407,18 +407,35 @@ sortedFoods.sort((a, b) => {
 
         const dday = getDday(food.expiryDate);
 
-        let color = "black";
-        if (dday.includes("지남")) color = "red";
-        else if (dday.includes("임박") || dday.includes("오늘")) color = "orange";
+        let badgeColor = "#4CAF50";
+        let badgeBg = "#e8f5e9";
+        if (dday.includes("만료됨")) {
+            badgeColor = "#999";
+            badgeBg = "#f0f0f0";
+        } else if (dday.includes("오늘")) {
+            badgeColor = "#ff4d4f";
+            badgeBg = "#fff1f0";
+        } else if (dday.includes("임박")) {
+            badgeColor = "#ff7a00";
+            badgeBg = "#fff7e6";
+        }
 
         li.innerHTML = `
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; width:100%;">
                 ${food.image ? `<img src="${food.image}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">` : ""}
 
-                <div class="food-info" style="color:${color}">
+                <div class="food-info" style="flex:1;">
                     <span class="food-name">${food.name}</span>
                     <span class="food-date">${food.expiryDate}</span>
-                    <span class="food-dday">${dday}</span>
+                    <span style="
+                        display:inline-block;
+                        padding:3px 10px;
+                        border-radius:20px;
+                        font-size:13px;
+                        font-weight:600;
+                        color:${badgeColor};
+                        background:${badgeBg};
+                    ">${dday}</span>
                 </div>
             </div>
         <button class="delete-btn" onclick="deleteFood(${food.id})">삭제</button>
