@@ -530,8 +530,15 @@ function showDateCandidates(matches) {
 
         // 260501 → 2026-05-01
         if (/^\d{6}$/.test(clean)) {
+
             clean =
                 `20${clean.slice(0,2)}-${clean.slice(2,4)}-${clean.slice(4,6)}`;
+        }
+
+// 26-02-02 → 2026-02-02
+        else if (/^\d{2}-\d{2}-\d{2}$/.test(clean)) {
+
+            clean = `20${clean}`;
         }
 
         const btn = document.createElement("button");
