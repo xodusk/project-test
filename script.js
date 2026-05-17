@@ -542,13 +542,11 @@ function showDateCandidates(matches) {
 
     clearInterval(scanInterval);
 
-    const container = document.getElementById("dateCandidates");
-
-    container.innerHTML = "";
+    stopCamera();
 
     const unique = [...new Set(matches)];
 
-    unique.forEach(raw => {
+    let cleanDates = unique.map(raw => {
 
         let clean = raw
             .replace(/년|월/g, "-")
@@ -561,37 +559,29 @@ function showDateCandidates(matches) {
                 `20${clean.slice(0,2)}-${clean.slice(2,4)}-${clean.slice(4,6)}`;
         }
 
-// 26-02-02 → 2026-02-02
+        // 26-02-02 → 2026-02-02
         else if (/^\d{2}-\d{2}-\d{2}$/.test(clean)) {
 
             clean = `20${clean}`;
         }
 
-        const btn = document.createElement("button");
-
-        btn.textContent = clean;
-
-        btn.style.cssText = `
-            margin:5px;
-            padding:8px 12px;
-            border:none;
-            border-radius:8px;
-            background:#4CAF50;
-            color:white;
-            cursor:pointer;
-        `;
-
-        btn.onclick = () => {
-
-            document.getElementById("expiryDate").value = clean;
-
-            alert("유통기한 선택 완료!");
-
-            container.innerHTML = "";
-
-            stopCamera();
-        };
-
-        container.appendChild(btn);
+        return clean;
     });
+
+    const selected = cleanDates[0];
+
+    const ok = confirm(
+        `유통기한을 인식했습니다.\n\n${selected}\n\n맞으면 확인을 눌러주세요.`
+    );
+
+    if (ok) {
+
+        document.getElementById("expiryDate").value = selected;
+
+        alert("유통기한 등록 완료!");
+
+    } else {
+
+        startOcrMode();
+    }
 }
