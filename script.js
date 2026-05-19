@@ -550,6 +550,9 @@ sortedFoods.forEach(food => {
     }
 
 function deleteFood(id) {
+    const food = foods.find(f => f.id === id);
+    const ok = confirm(`"${food.name}" 을(를) 삭제하시겠습니까?`);
+    if (!ok) return;
     foods = foods.filter(f => f.id !== id);
     localStorage.setItem("foods", JSON.stringify(foods));
     renderFoodList();
