@@ -336,6 +336,7 @@ const foodTranslations = {
     "요거트": "yogurt", "햄": "ham",
     "소시지": "sausage", "참치": "tuna",
     "연어": "salmon", "새우": "shrimp",
+    "고기": "meat",
 };
 
 function getUrgentIngredients() {
