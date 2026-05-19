@@ -589,6 +589,12 @@ function showDateCandidates(matches) {
             clean =
                 `20${clean.slice(0,2)}-${clean.slice(2,4)}-${clean.slice(4,6)}`;
         }
+        // 20250302 → 2025-03-02
+        else if (/^\d{8}$/.test(clean)) {
+
+            clean =
+                `${clean.slice(0,4)}-${clean.slice(4,6)}-${clean.slice(6,8)}`;
+        }
 
         // 26-02-02 → 2026-02-02
         else if (/^\d{2}-\d{2}-\d{2}$/.test(clean)) {
