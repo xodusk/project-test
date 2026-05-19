@@ -411,10 +411,40 @@ sortedFoods.sort((a, b) => {
     return aDiff - bDiff;
 });
 
-    sortedFoods.forEach(food => {
-        const li = document.createElement("li");
+sortedFoods.forEach(food => {
 
-        const dday = getDday(food.expiryDate);
+    const li = document.createElement("li");
+
+    // 🔥 유통기한 계산
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const expiry = new Date(food.expiryDate);
+    expiry.setHours(0,0,0,0);
+
+    const diff = Math.ceil(
+        (expiry - today) / (1000*60*60*24)
+    );
+
+    // 🔥 상태별 색상 클래스
+    if (diff <= 7 && diff > 3) {
+
+        li.classList.add("safe");
+
+    } else if (diff <= 3 && diff > 1) {
+
+        li.classList.add("warning");
+
+    } else if (diff <= 1 && diff >= 0) {
+
+        li.classList.add("urgent");
+
+    } else if (diff < 0) {
+
+        li.classList.add("expired");
+    }
+
+    const dday = getDday(food.expiryDate);
 
         let badgeColor = "#4CAF50";
         let badgeBg = "#e8f5e9";
