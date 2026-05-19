@@ -320,22 +320,72 @@ function getDiffDays(date) {
 
 // 한글 → 영어 번역 테이블
 const foodTranslations = {
+    // 계란류
     "계란": "egg", "달걀": "egg",
+
+    // 유제품
     "우유": "milk",
+    "치즈": "cheese",
+    "버터": "butter",
+    "요거트": "yogurt",
+    "생크림": "heavy cream",
     "두부": "tofu",
+
+    // 육류
     "돼지고기": "pork", "삼겹살": "pork",
     "닭고기": "chicken", "닭가슴살": "chicken breast",
     "소고기": "beef",
-    "양파": "onion", "마늘": "garlic",
-    "감자": "potato", "고구마": "sweet potato",
-    "당근": "carrot", "오이": "cucumber",
-    "토마토": "tomato", "버섯": "mushroom",
-    "시금치": "spinach", "배추": "cabbage",
-    "밥": "rice", "라면": "ramen",
-    "치즈": "cheese", "버터": "butter",
-    "요거트": "yogurt", "햄": "ham",
-    "소시지": "sausage", "참치": "tuna",
-    "연어": "salmon", "새우": "shrimp",
+    "다진고기": "ground beef",
+    "베이컨": "bacon",
+    "햄": "ham",
+    "소시지": "sausage",
+
+    // 해산물
+    "참치": "tuna",
+    "연어": "salmon",
+    "새우": "shrimp",
+    "고등어": "mackerel",
+    "오징어": "squid",
+    "조개": "clam",
+    "명란": "pollock roe",
+
+    // 채소
+    "양파": "onion",
+    "마늘": "garlic",
+    "당근": "carrot",
+    "오이": "cucumber",
+    "토마토": "tomato",
+    "버섯": "mushroom",
+    "시금치": "spinach",
+    "배추": "cabbage",
+    "파": "green onion",
+    "브로콜리": "broccoli",
+    "애호박": "zucchini",
+    "피망": "bell pepper",
+    "감자": "potato",
+    "고구마": "sweet potato",
+
+    // 가공식품
+    "어묵": "fish cake",
+    "만두": "dumpling",
+    "떡": "rice cake",
+    "라면": "ramen",
+
+    // 과일
+    "바나나": "banana",
+    "딸기": "strawberry",
+    "포도": "grape",
+    "사과": "apple",
+    "귤": "tangerine",
+
+    // 소스/양념
+    "된장": "miso",
+    "고추장": "gochujang",
+    "마요네즈": "mayonnaise",
+    "케첩": "ketchup",
+
+    // 기타
+    "밥": "rice",
     "고기": "meat",
 };
 
