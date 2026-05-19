@@ -418,11 +418,13 @@ renderFoodList();
 
 // 🔥 추가 완료 메시지
 const status = document.getElementById("statusMessage");
-
 status.textContent = "🥬 냉장고에 추가되었습니다!";
 
+// 🔥 2초 후 등록 탭으로 자동 이동
 setTimeout(() => {
     status.textContent = "";
+    const registerBtn = document.querySelector(".tab-btn:nth-child(2)");
+    switchTab('register', registerBtn);
 }, 2000);
 
 foodName.value = "";
