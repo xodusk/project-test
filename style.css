@@ -194,3 +194,41 @@ button:active {
     font-size: 16px;
     font-weight: 600;
 }
+
+/* 여유 */
+.safe {
+    border-left: 6px solid #4CAF50;
+}
+
+/* 주의 */
+.warning {
+    border-left: 6px solid #ff9800;
+}
+
+/* 위험 */
+.urgent {
+    border-left: 6px solid #ff4d4f;
+    animation: pulse 1s infinite;
+}
+
+/* 만료 */
+.expired {
+    border-left: 6px solid #777;
+    opacity: 0.6;
+}
+
+/* 위험 음식 애니메이션 */
+@keyframes pulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
