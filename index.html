@@ -3,72 +3,221 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>유통기한 관리</title>
+
     <link rel="stylesheet" href="style.css" />
 
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
+
+    <!-- iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1554/1554401.png">
+
+    <link rel="apple-touch-icon"
+        href="https://cdn-icons-png.flaticon.com/512/1554/1554401.png">
 </head>
+
 <body>
-    <div class="container">
+
+<div class="container">
+
     <!-- 탭 메뉴 -->
     <div class="tab-menu">
-        <button class="tab-btn active" onclick="switchTab('input', this)">➕ 입력</button>
-        <button class="tab-btn" onclick="switchTab('register', this)">📋 등록</button>
-        <button class="tab-btn" onclick="switchTab('recipe', this)">🍳 레시피</button>
+
+        <button
+            class="tab-btn active"
+            onclick="switchTab('input', this)"
+        >
+            ➕ 입력
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('register', this)"
+        >
+            📋 등록
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('recipe', this)"
+        >
+            🍳 레시피
+        </button>
+
     </div>
 
     <!-- 입력 탭 -->
     <div id="tab-input" class="tab-content">
+
         <h1>식품 입력</h1>
-        <input type="text" id="foodName" placeholder="식품 이름 입력" />
-        <input type="date" id="expiryDate" />
+
+        <!-- 상품명 -->
+        <input
+            type="text"
+            id="foodName"
+            placeholder="식품 이름 입력"
+        />
+
+        <!-- 유통기한 -->
+        <input
+            type="date"
+            id="expiryDate"
+        />
+
+        <!-- OCR 날짜 후보 -->
         <div id="dateCandidates"></div>
-        <button onclick="addFood()">추가</button>
+
+        <!-- 추가 버튼 -->
+        <button onclick="addFood()">
+            추가
+        </button>
+
+        <!-- 상태 메시지 -->
         <p id="statusMessage"></p>
+
+        <!-- 카메라 -->
         <h3>카메라 입력</h3>
-        <button onclick="startBarcodeMode()">상품명 스캔</button>
-        <button onclick="startOcrMode()">유통기한 스캔</button>
+
+        <button onclick="startBarcodeMode()">
+            상품명 스캔
+        </button>
+
+        <button onclick="startOcrMode()">
+            유통기한 스캔
+        </button>
+
+        <!-- 카메라 영역 -->
         <div class="camera-wrapper">
-            <video id="camera" autoplay playsinline></video>
+
+            <video
+                id="camera"
+                autoplay
+                playsinline
+            ></video>
+
+            <!-- 스캔 박스 -->
             <div id="scanBox"></div>
+
         </div>
-        <button onclick="clearCamera()">촬영 종료</button>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <img id="preview" style="width:100%; border-radius:12px; margin-top:10px; display:none;" />
+
+        <!-- 카메라 종료 -->
+        <button onclick="clearCamera()">
+            촬영 종료
+        </button>
+
+        <!-- OCR 캔버스 -->
+        <canvas
+            id="canvas"
+            style="display:none;"
+        ></canvas>
+
+        <!-- 상품 이미지 -->
+        <img
+            id="preview"
+            style="
+                width:100%;
+                border-radius:12px;
+                margin-top:10px;
+            "
+        />
+
     </div>
 
     <!-- 등록 탭 -->
-    <div id="tab-register" class="tab-content" style="display:none;">
+    <div
+        id="tab-register"
+        class="tab-content"
+        style="display:none;"
+    >
+
         <h1>등록된 식품</h1>
+
         <p id="todayDate"></p>
+
+        <!-- 남은 식품 -->
         <h3>🟢 유통기한 남은 식품</h3>
+
         <ul id="validList"></ul>
+
+        <!-- 만료 식품 -->
         <h3>❌ 유통기한 지난 식품</h3>
+
         <ul id="expiredList"></ul>
+
     </div>
 
     <!-- 레시피 탭 -->
-    <div id="tab-recipe" class="tab-content" style="display:none;">
+    <div
+        id="tab-recipe"
+        class="tab-content"
+        style="display:none;"
+    >
+
         <h1>추천 레시피</h1>
-        <button onclick="showRecipes()">레시피 추천 받기</button>
-        <button onclick="clearRecipeCache()" style="background:#ff4d4f; color:white;">레시피 캐시 초기화</button>
+
+        <button onclick="showRecipes()">
+            레시피 추천 받기
+        </button>
+
+        <button
+            onclick="clearRecipeCache()"
+            style="
+                background:#ff4d4f;
+                color:white;
+            "
+        >
+            레시피 캐시 초기화
+        </button>
+
         <ul id="recipeList"></ul>
+
     </div>
+
 </div>
+
+<!-- ZXing -->
 <script src="https://unpkg.com/@zxing/library@latest"></script>
+
+<!-- OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<!-- JS -->
 <script src="script.js"></script>
+
+<!-- 서비스 워커 -->
 <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('서비스 워커 등록 성공:', reg.scope))
-                .catch(err => console.error('서비스 워커 등록 실패:', err));
-        });
-    }
+
+if ('serviceWorker' in navigator) {
+
+    window.addEventListener('load', () => {
+
+        navigator.serviceWorker.register('sw.js')
+
+            .then(reg => {
+
+                console.log(
+                    '서비스 워커 등록 성공:',
+                    reg.scope
+                );
+
+            })
+
+            .catch(err => {
+
+                console.error(
+                    '서비스 워커 등록 실패:',
+                    err
+                );
+
+            });
+
+    });
+}
+
 </script>
+
 </body>
 </html>
