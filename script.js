@@ -358,7 +358,7 @@ const foodTranslations = {
     "버섯": "mushroom",
     "시금치": "spinach",
     "배추": "cabbage",
-    "파": "green onion",
+    "파": "scallion",
     "브로콜리": "broccoli",
     "애호박": "zucchini",
     "피망": "bell pepper",
