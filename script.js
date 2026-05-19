@@ -362,10 +362,20 @@ function addFood() {
     });
 
     localStorage.setItem("foods", JSON.stringify(foods));
-    renderFoodList();
 
-    foodName.value = "";
-    expiryDate.value = "";
+renderFoodList();
+
+// 🔥 추가 완료 메시지
+const status = document.getElementById("statusMessage");
+
+status.textContent = "🥬 냉장고에 추가되었습니다!";
+
+setTimeout(() => {
+    status.textContent = "";
+}, 2000);
+
+foodName.value = "";
+expiryDate.value = "";
 
     lastCapturedImage = null; // 🔥 추가: 다음 입력을 위해 초기화
     document.getElementById("preview").src = ""; // 🔥 미리보기 초기화
