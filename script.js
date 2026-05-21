@@ -466,9 +466,9 @@ sortedFoods.sort((a, b) => {
     const aDiff = Math.ceil((aDate - today) / (1000*60*60*24));
     const bDiff = Math.ceil((bDate - today) / (1000*60*60*24));
 
-    // 🔥 1. 만료된 건 무조건 아래
-    if (aDiff < 0 && bDiff >= 0) return 1;
-    if (aDiff >= 0 && bDiff < 0) return -1;
+    // 🔥 1. 만료된 건 위로
+    if (aDiff < 0 && bDiff >= 0) return -1;
+    if (aDiff >= 0 && bDiff < 0) return 1;
 
     // 🔥 2. 나머지는 임박 순
     return aDiff - bDiff;
