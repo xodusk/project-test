@@ -678,10 +678,3 @@ function showDateCandidates(matches) {
         startOcrMode();
     }
 }
-async function enableNotification() {
-
-    const result =
-        await Notification.requestPermission();
-
-    alert("결과: " + result);
-}
