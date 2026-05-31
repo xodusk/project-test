@@ -610,7 +610,6 @@ function checkExpiryNotifications() {
     }
 }
 window.onload = async () => {
-    alert(Notification.permission);
     const saved = localStorage.getItem("foods");
     if (saved) foods = JSON.parse(saved);
 
